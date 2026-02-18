@@ -55,6 +55,16 @@ public class RelayClient : IDisposable
             throw new InvalidOperationException("Only secure WebSocket connections (wss://) are allowed");
         }
 
+        // Vyčistit předchozí spojení pokud existuje
+        if (_ws != null)
+        {
+            _cts?.Cancel();
+            if (_ws.State == WebSocketState.Open)
+                try { await _ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Reconnecting", CancellationToken.None); } catch { }
+            _ws.Dispose();
+            _ws = null;
+        }
+
         _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         _ws = new ClientWebSocket();
 

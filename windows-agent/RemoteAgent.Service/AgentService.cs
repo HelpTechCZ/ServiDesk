@@ -208,14 +208,24 @@ public class AgentService : BackgroundService
                         _relayClient.CustomerName = data.CustomerName;
                 }
                 _logger.LogInformation("GUI requested relay connection for: {Name}", _relayClient.CustomerName);
-                try
+
+                if (_relayClient.IsConnected)
                 {
-                    await _relayClient.ConnectAsync();
+                    // Už jsme připojeni k relay (např. z unattended auto-connect) → jen oznámit GUI
+                    _logger.LogInformation("Already connected to relay, notifying GUI");
+                    await _pipeServer.SendStatusAsync("connected");
                 }
-                catch (Exception ex)
+                else
                 {
-                    _logger.LogError(ex, "Failed to connect to relay");
-                    await _pipeServer.SendErrorAsync("CONNECTION_FAILED", ex.Message);
+                    try
+                    {
+                        await _relayClient.ConnectAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to connect to relay");
+                        await _pipeServer.SendErrorAsync("CONNECTION_FAILED", ex.Message);
+                    }
                 }
                 break;
             }
