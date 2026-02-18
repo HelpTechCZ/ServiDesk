@@ -498,6 +498,12 @@ public class MainViewModel : INotifyPropertyChanged
                     IsCheckingUpdate = false;
                     break;
 
+                case IpcNotification.RequestRejected:
+                    CurrentState = ViewState.Disconnected;
+                    SessionEndReason = "Technik zamítl vaši žádost o podporu.";
+                    StatusText = SessionEndReason;
+                    break;
+
                 case IpcNotification.Error:
                     var code = payload?.GetProperty("code").GetString();
                     var msg = payload?.GetProperty("message").GetString();

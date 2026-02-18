@@ -129,6 +129,13 @@ class AppState: ObservableObject {
             self.state = .disconnected(reason: endedBy == "admin" ? "Technik ukončil session" : reason)
         }
 
+        // Request rejected by admin
+        relay.onRequestRejected = { [weak self] reason in
+            guard let self = self else { return }
+            self.relay.disconnect(reason: "rejected")
+            self.state = .disconnected(reason: "Technik zamítl vaši žádost o podporu.")
+        }
+
         // E2E key exchange – viewer poslal svůj veřejný klíč
         relay.onE2EKeyExchange = { [weak self] peerPublicKey in
             guard let self = self else { return }

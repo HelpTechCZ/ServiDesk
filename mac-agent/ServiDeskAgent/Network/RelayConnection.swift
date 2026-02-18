@@ -57,6 +57,7 @@ class RelayConnection: ObservableObject {
     var onFileTransferControl: ((String, [String: Any]) -> Void)?
     var onFileTransferData: ((Data) -> Void)?           // raw 0x04 binary
     var onMonitorSwitch: ((Int) -> Void)?               // monitor index
+    var onRequestRejected: ((String) -> Void)?            // reason
     var onError: ((String, String) -> Void)?            // code, message
 
     init(config: AgentConfig) {
@@ -440,6 +441,11 @@ class RelayConnection: ObservableObject {
             e2eCrypto.reset()
             sessionId = nil
             onSessionEnded?(payload.reason, payload.ended_by)
+
+        case "request_rejected":
+            let reason = payloadDict?["reason"] as? String ?? "rejected"
+            print(">>> Request rejected: \(reason)")
+            onRequestRejected?(reason)
 
         case "e2e_key_exchange":
             if let peerPublicKey = payloadDict?["public_key"] as? String {

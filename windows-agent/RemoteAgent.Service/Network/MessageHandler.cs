@@ -12,6 +12,7 @@ public class MessageHandler
     public event Action<string>? OnRegistered;           // session_id
     public event Action<string, string>? OnSessionAccepted;  // admin_name, message
     public event Action<string, string>? OnSessionEnded;     // reason, ended_by
+    public event Action<string>? OnRequestRejected;           // reason
     public event Action<string, string>? OnError;            // code, message
     public event Action<QualityChangePayload>? OnQualityChange;
     public event Action<byte[]>? OnInputData;            // binární input eventy
@@ -42,6 +43,11 @@ public class MessageHandler
                 var reason = payload.GetProperty("reason").GetString() ?? "";
                 var endedBy = payload.GetProperty("ended_by").GetString() ?? "";
                 OnSessionEnded?.Invoke(reason, endedBy);
+                break;
+
+            case "request_rejected":
+                var rejectReason = payload.TryGetProperty("reason", out var rr) ? rr.GetString() ?? "rejected" : "rejected";
+                OnRequestRejected?.Invoke(rejectReason);
                 break;
 
             case "quality_change":

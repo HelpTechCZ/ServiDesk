@@ -277,6 +277,14 @@ class RelayWebSocketServer {
           break;
         }
 
+        case 'reject_request': {
+          const sessionId = msg.payload?.session_id;
+          if (sessionId) {
+            this.sessionManager.rejectRequest(sessionId, msg.payload?.reason || 'rejected');
+          }
+          break;
+        }
+
         case 'session_end': {
           const sessionId = msg.payload?.session_id;
           if (sessionId) {

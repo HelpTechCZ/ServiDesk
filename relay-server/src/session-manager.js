@@ -134,6 +134,7 @@ class SessionManager {
       hostname: agent.hostname,
       osVersion: agent.osVersion,
       message: safeMessage,
+      hwInfo: agent.hwInfo || null,
       screenWidth: data.screen_width || 1920,
       screenHeight: data.screen_height || 1080,
       requestedAt: Date.now(),
@@ -222,6 +223,40 @@ class SessionManager {
     return viewerMsg;
   }
 
+  rejectRequest(sessionId, reason) {
+    const request = this.pendingRequests.get(sessionId);
+    if (!request) return;
+
+    // Oznámit agentovi, že žádost byla zamítnuta
+    const agent = this.agents.get(request.agentId);
+    if (agent && agent.ws.readyState === 1) {
+      agent.ws.send(JSON.stringify({
+        type: 'request_rejected',
+        payload: { reason: reason || 'rejected' },
+      }));
+    }
+
+    // Reset stavu agenta
+    if (agent) {
+      agent.status = 'connected';
+    }
+
+    this.pendingRequests.delete(sessionId);
+
+    // Oznámit všem adminům, aby odebrali žádost
+    const notification = JSON.stringify({
+      type: 'request_cancelled',
+      payload: { session_id: sessionId },
+    });
+    for (const [, admin] of this.admins) {
+      if (admin.authenticated && admin.ws.readyState === 1) {
+        admin.ws.send(notification);
+      }
+    }
+
+    logger.info('Request rejected by admin', { sessionId, reason });
+  }
+
   endSession(sessionId, reason, endedBy) {
     const session = this.activeSessions.get(sessionId);
     if (!session) {
@@ -284,6 +319,7 @@ class SessionManager {
         os_version: req.osVersion,
         requested_at: new Date(req.requestedAt).toISOString(),
         message: req.message,
+        hw_info: req.hwInfo || null,
       });
     }
 

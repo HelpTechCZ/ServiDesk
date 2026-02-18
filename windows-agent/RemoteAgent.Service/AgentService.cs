@@ -64,6 +64,7 @@ public class AgentService : BackgroundService
         _messageHandler.OnRegistered += OnAgentRegistered;
         _messageHandler.OnSessionAccepted += OnSessionAccepted;
         _messageHandler.OnSessionEnded += OnSessionEnded;
+        _messageHandler.OnRequestRejected += OnRequestRejected;
         _messageHandler.OnError += OnRelayError;
         _messageHandler.OnQualityChange += OnQualityChange;
         _messageHandler.OnInputData += OnInputData;
@@ -470,6 +471,15 @@ public class AgentService : BackgroundService
 
         await _pipeServer.SendNotificationAsync(IpcNotification.SessionEnded,
             new SessionEndedIpcPayload { Reason = reason, EndedBy = endedBy });
+    }
+
+    private async void OnRequestRejected(string reason)
+    {
+        _logger.LogInformation("Support request rejected: {Reason}", reason);
+        _sessionManager.Reset();
+
+        await _pipeServer.SendNotificationAsync(IpcNotification.RequestRejected,
+            new RequestRejectedIpcPayload { Reason = reason });
     }
 
     private async void OnRelayError(string code, string message)

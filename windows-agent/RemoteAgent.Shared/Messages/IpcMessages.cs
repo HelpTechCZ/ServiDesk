@@ -58,6 +58,7 @@ public static class IpcNotification
     public const string FileIncoming = "file_incoming";
     public const string FileReceived = "file_received";
     public const string UpdateCheckResult = "update_check_result";
+    public const string RequestRejected = "request_rejected";
 }
 
 public class FileIncomingPayload
@@ -151,6 +152,12 @@ public class ErrorIpcPayload
 
     [JsonPropertyName("message")]
     public string Message { get; set; } = string.Empty;
+}
+
+public class RequestRejectedIpcPayload
+{
+    [JsonPropertyName("reason")]
+    public string Reason { get; set; } = string.Empty;
 }
 
 public class SetUnattendedPasswordPayload
