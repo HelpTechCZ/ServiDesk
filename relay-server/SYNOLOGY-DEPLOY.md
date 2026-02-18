@@ -86,13 +86,29 @@ V `/volume1/docker/servidesk-relay/` vytvořit soubor `.env`:
 ```env
 PORT=8090
 HOST=0.0.0.0
+
+# Vygeneruj: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ADMIN_TOKEN=CHANGE_ME_GENERATE_RANDOM_TOKEN
+
+# Proxy – true pokud za reverse proxy (Synology = true)
+TRUST_PROXY=true
+
 SESSION_TIMEOUT_MS=3600000
 HEARTBEAT_INTERVAL_MS=10000
 HEARTBEAT_TIMEOUT_MS=30000
+
 MAX_PENDING_REQUESTS=50
 MAX_ACTIVE_SESSIONS=10
 MAX_MESSAGE_SIZE_BYTES=2097152
+MAX_CONNECTIONS_PER_IP=20
+MAX_DEVICES=500
+MAX_MESSAGES_PER_SECOND=100
+MAX_RELAY_FRAME_BYTES=2097152
+
+# Povolené originy pro WebSocket (prázdné = vše povoleno)
+# Příklad: ALLOWED_ORIGINS=https://admin.example.com
+ALLOWED_ORIGINS=
+
 LOG_LEVEL=info
 ```
 
