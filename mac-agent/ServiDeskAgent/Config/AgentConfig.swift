@@ -2,18 +2,20 @@ import Foundation
 import CryptoKit
 
 class AgentConfig: ObservableObject, Codable {
-    @Published var relayServerURL: String = "wss://your-relay-domain.example.com/ws"
+    @Published var relayServerURL: String = ""
     @Published var agentId: String = ""
     @Published var agentVersion: String = "1.0.0"
     @Published var captureMaxFps: Int = 30
     @Published var captureDefaultQuality: String = "medium"
+    @Published var provisionToken: String = ""
+    @Published var agentToken: String = ""
     @Published var unattendedAccessEnabled: Bool = false
     @Published var unattendedAccessPasswordHash: String = ""
 
     enum CodingKeys: String, CodingKey {
         case relayServerURL, agentId, agentVersion
         case captureMaxFps, captureDefaultQuality
-        case unattendedAccessEnabled, unattendedAccessPasswordHash
+        case provisionToken, agentToken, unattendedAccessEnabled, unattendedAccessPasswordHash
     }
 
     init() {
@@ -23,11 +25,13 @@ class AgentConfig: ObservableObject, Codable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        relayServerURL = try container.decodeIfPresent(String.self, forKey: .relayServerURL) ?? "wss://your-relay-domain.example.com/ws"
+        relayServerURL = try container.decodeIfPresent(String.self, forKey: .relayServerURL) ?? ""
         agentId = try container.decodeIfPresent(String.self, forKey: .agentId) ?? UUID().uuidString
         agentVersion = try container.decodeIfPresent(String.self, forKey: .agentVersion) ?? "1.0.0"
         captureMaxFps = try container.decodeIfPresent(Int.self, forKey: .captureMaxFps) ?? 30
         captureDefaultQuality = try container.decodeIfPresent(String.self, forKey: .captureDefaultQuality) ?? "medium"
+        provisionToken = try container.decodeIfPresent(String.self, forKey: .provisionToken) ?? ""
+        agentToken = try container.decodeIfPresent(String.self, forKey: .agentToken) ?? ""
         unattendedAccessEnabled = try container.decodeIfPresent(Bool.self, forKey: .unattendedAccessEnabled) ?? false
         unattendedAccessPasswordHash = try container.decodeIfPresent(String.self, forKey: .unattendedAccessPasswordHash) ?? ""
     }
@@ -39,6 +43,8 @@ class AgentConfig: ObservableObject, Codable {
         try container.encode(agentVersion, forKey: .agentVersion)
         try container.encode(captureMaxFps, forKey: .captureMaxFps)
         try container.encode(captureDefaultQuality, forKey: .captureDefaultQuality)
+        try container.encode(provisionToken, forKey: .provisionToken)
+        try container.encode(agentToken, forKey: .agentToken)
         try container.encode(unattendedAccessEnabled, forKey: .unattendedAccessEnabled)
         try container.encode(unattendedAccessPasswordHash, forKey: .unattendedAccessPasswordHash)
     }

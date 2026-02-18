@@ -1,11 +1,17 @@
 const logger = require('./logger');
+const config = require('./config');
 
 // Nastavení relay přeposílání binárních i JSON dat mezi agentem a viewerem
 function setupRelay(sessionId, session) {
   const { agentWs, viewerWs } = session;
+  const maxFrame = config.maxRelayFrameBytes;
 
   // Agent → Viewer
   const agentMessageHandler = (data, isBinary) => {
+    if (data.length > maxFrame) {
+      logger.warn('Relay frame too large (agent→viewer)', { sessionId, size: data.length });
+      return;
+    }
     if (viewerWs.readyState === 1) {
       viewerWs.send(data, { binary: isBinary });
       session.lastActivity = Date.now();
@@ -14,6 +20,10 @@ function setupRelay(sessionId, session) {
 
   // Viewer → Agent
   const viewerMessageHandler = (data, isBinary) => {
+    if (data.length > maxFrame) {
+      logger.warn('Relay frame too large (viewer→agent)', { sessionId, size: data.length });
+      return;
+    }
     // Binární zprávy přeposílat přímo
     if (isBinary) {
       if (agentWs.readyState === 1) {

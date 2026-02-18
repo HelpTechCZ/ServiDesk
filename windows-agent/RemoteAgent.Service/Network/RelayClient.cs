@@ -43,6 +43,18 @@ public class RelayClient : IDisposable
 
     public async Task ConnectAsync(CancellationToken ct = default)
     {
+        // Auto-provisioning: pokud nemáme agent token, získat ho
+        if (string.IsNullOrEmpty(_config.AgentToken) && !string.IsNullOrEmpty(_config.ProvisionToken))
+        {
+            await ProvisionAsync(ct);
+        }
+
+        // Vynutit šifrované spojení
+        if (!_config.RelayServerUrl.StartsWith("wss://", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Only secure WebSocket connections (wss://) are allowed");
+        }
+
         _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         _ws = new ClientWebSocket();
 
@@ -62,13 +74,51 @@ public class RelayClient : IDisposable
                 AgentVersion = _config.AgentVersion,
                 UnattendedEnabled = _config.UnattendedAccessEnabled,
                 UnattendedPasswordHash = _config.UnattendedAccessPasswordHash,
-                HwInfo = HardwareInfoCollector.Collect()
+                HwInfo = HardwareInfoCollector.Collect(),
+                AgentToken = _config.AgentToken
             }
         });
 
         // Spustit receive loop a heartbeat
         _ = Task.Run(() => ReceiveLoopAsync(_cts.Token), _cts.Token);
         _ = Task.Run(() => HeartbeatLoopAsync(_cts.Token), _cts.Token);
+    }
+
+    /// <summary>
+    /// Automatický provisioning – zavolá /api/provision na relay serveru
+    /// a získá unikátní agent_token. Volá se jednou při prvním startu.
+    /// </summary>
+    private async Task ProvisionAsync(CancellationToken ct)
+    {
+        // Sestavit HTTP URL z WebSocket URL
+        var httpUrl = _config.RelayServerUrl
+            .Replace("wss://", "https://")
+            .Replace("ws://", "http://")
+            .Replace("/ws", "/api/provision");
+
+        using var http = new System.Net.Http.HttpClient();
+        http.Timeout = TimeSpan.FromSeconds(15);
+
+        var payload = JsonSerializer.Serialize(new
+        {
+            provision_token = _config.ProvisionToken,
+            agent_id = _config.AgentId,
+            hostname = Environment.MachineName
+        });
+
+        var content = new System.Net.Http.StringContent(payload, Encoding.UTF8, "application/json");
+        var response = await http.PostAsync(httpUrl, content, ct);
+        var body = await response.Content.ReadAsStringAsync(ct);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var doc = JsonDocument.Parse(body);
+            if (doc.RootElement.TryGetProperty("agent_token", out var tokenProp))
+            {
+                _config.AgentToken = tokenProp.GetString() ?? "";
+                _config.Save();
+            }
+        }
     }
 
     public async Task ConnectWithRetryAsync(CancellationToken ct = default)

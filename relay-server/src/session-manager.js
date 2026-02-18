@@ -4,6 +4,16 @@ const logger = require('./logger');
 const auth = require('./auth');
 const SessionLog = require('./session-log');
 const DeviceRegistry = require('./device-registry');
+const ProvisionManager = require('./provision-manager');
+
+// Sanitizace uživatelských vstupů – strip HTML, max délka
+function sanitizeString(str, maxLen = 255) {
+  if (typeof str !== 'string') return '';
+  return str.slice(0, maxLen).replace(/[<>"'&]/g, c => {
+    const map = { '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '&': '&amp;' };
+    return map[c] || c;
+  });
+}
 
 class SessionManager {
   constructor() {
@@ -19,6 +29,8 @@ class SessionManager {
     this.sessionLog = new SessionLog();
     // Device registry
     this.deviceRegistry = new DeviceRegistry();
+    // Provision manager
+    this.provisionManager = new ProvisionManager();
 
     // Periodický cleanup
     this._cleanupInterval = setInterval(() => this.cleanupExpired(), 30000);
@@ -28,33 +40,56 @@ class SessionManager {
 
   registerAgent(ws, data) {
     const { agent_id, customer_name, hostname, os_version, agent_version,
-            unattended_enabled, unattended_password_hash, hw_info } = data;
+            unattended_enabled, unattended_password_hash, hw_info, agent_token } = data;
 
     if (!agent_id || !customer_name || !hostname) {
       return { error: 'INVALID_DATA', message: 'Missing required fields: agent_id, customer_name, hostname' };
     }
 
-    // Pokud agent už existuje, aktualizovat WS
+    // Sanitizovat uživatelské vstupy
+    const safeCustomerName = sanitizeString(customer_name);
+    const safeHostname = sanitizeString(hostname);
+    const safeOsVersion = sanitizeString(os_version || 'Unknown');
+    const safeAgentVersion = sanitizeString(agent_version || '0.0.0', 32);
+
+    // Ověřit agent_token pokud je provisioning zapnutý
+    if (this.provisionManager.isProvisioningEnabled()) {
+      if (!agent_token || !this.provisionManager.validateAgentToken(agent_id, agent_token)) {
+        logger.warn('Agent registration rejected – invalid token', { agentId: agent_id });
+        return { error: 'AUTH_FAILED', message: 'Invalid or missing agent token. Provision first via /api/provision.' };
+      }
+    }
+
+    // Validace agent_id formátu
+    if (agent_id.length > 128 || !/^[a-zA-Z0-9\-_]+$/.test(agent_id)) {
+      return { error: 'INVALID_DATA', message: 'Invalid agent_id format' };
+    }
+
+    // Pokud agent už existuje a jeho WS je živý, odmítnout re-registraci
     if (this.agents.has(agent_id)) {
       const existing = this.agents.get(agent_id);
+      if (existing.ws && existing.ws.readyState === 1) {
+        logger.warn('Agent re-registration rejected – already connected', { agentId: agent_id });
+        return { error: 'ALREADY_CONNECTED', message: 'Agent is already connected' };
+      }
       existing.ws = ws;
       existing.lastHeartbeat = Date.now();
-      logger.info('Agent reconnected', { agentId: agent_id, hostname });
+      logger.info('Agent reconnected', { agentId: agent_id, hostname: safeHostname });
     } else {
       this.agents.set(agent_id, {
         ws,
         agentId: agent_id,
-        customerName: customer_name,
-        hostname,
-        osVersion: os_version || 'Unknown',
-        agentVersion: agent_version || '0.0.0',
+        customerName: safeCustomerName,
+        hostname: safeHostname,
+        osVersion: safeOsVersion,
+        agentVersion: safeAgentVersion,
         hwInfo: hw_info || null,
         status: 'connected',
         sessionId: null,
         connectedAt: Date.now(),
         lastHeartbeat: Date.now(),
       });
-      logger.info('Agent registered', { agentId: agent_id, hostname });
+      logger.info('Agent registered', { agentId: agent_id, hostname: safeHostname });
     }
 
     const sessionId = auth.generateSessionId();
@@ -64,10 +99,10 @@ class SessionManager {
 
     // Uložit/aktualizovat do device registry
     this.deviceRegistry.upsertDevice(agent_id, {
-      hostname,
-      osVersion: os_version || 'Unknown',
-      agentVersion: agent_version || '0.0.0',
-      customerName: customer_name,
+      hostname: safeHostname,
+      osVersion: safeOsVersion,
+      agentVersion: safeAgentVersion,
+      customerName: safeCustomerName,
       unattendedEnabled: unattended_enabled || false,
       unattendedPasswordHash: unattended_password_hash || '',
       hwInfo: hw_info || null,
@@ -91,13 +126,14 @@ class SessionManager {
 
     const sessionId = agent.sessionId;
     agent.status = 'waiting';
+    const safeMessage = sanitizeString(data.message || '', 1024);
 
     this.pendingRequests.set(sessionId, {
       agentId,
-      customerName: data.customer_name || agent.customerName,
+      customerName: data.customer_name ? sanitizeString(data.customer_name) : agent.customerName,
       hostname: agent.hostname,
       osVersion: agent.osVersion,
-      message: data.message || '',
+      message: safeMessage,
       screenWidth: data.screen_width || 1920,
       screenHeight: data.screen_height || 1080,
       requestedAt: Date.now(),
@@ -110,11 +146,11 @@ class SessionManager {
       type: 'support_request',
       payload: {
         session_id: sessionId,
-        customer_name: data.customer_name || agent.customerName,
+        customer_name: data.customer_name ? sanitizeString(data.customer_name) : agent.customerName,
         hostname: agent.hostname,
         os_version: agent.osVersion,
         requested_at: new Date().toISOString(),
-        message: data.message || '',
+        message: safeMessage,
         hw_info: agent.hwInfo || null,
       },
     };
@@ -335,6 +371,16 @@ class SessionManager {
 
     if (!device.unattendedPasswordHash) {
       return { error: 'NO_PASSWORD', message: 'Heslo není nastaveno' };
+    }
+
+    // Validace hex formátu pro oba hashe
+    const hexRegex = /^[0-9a-f]{64}$/i;
+    if (typeof passwordHash !== 'string' || !hexRegex.test(passwordHash)) {
+      return { error: 'INVALID_DATA', message: 'Invalid password hash format' };
+    }
+    if (!hexRegex.test(device.unattendedPasswordHash)) {
+      logger.warn('Stored password hash has invalid format', { agentId: agentId });
+      return { error: 'INTERNAL_ERROR', message: 'Stored password hash is invalid' };
     }
 
     // Timing-safe SHA-256 porovnání

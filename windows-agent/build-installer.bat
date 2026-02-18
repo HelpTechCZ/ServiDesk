@@ -6,6 +6,23 @@ echo   HelpTech.cz
 echo  ==========================================
 echo.
 
+REM Pouziti: build-installer.bat [RELAY_URL] [PROVISION_TOKEN]
+REM Priklad: build-installer.bat wss://my-server.com/ws abc123def456...
+set "RELAY_URL=%~1"
+set "PROVISION_TOKEN=%~2"
+set "CFG=RemoteAgent.Shared\Config\AgentConfig.cs"
+if not "%RELAY_URL%"=="" (
+    echo  [*] Injecting relay URL into build...
+    powershell -Command "(Get-Content '%CFG%') -replace 'RelayServerUrl \{ get; set; \} = \".*?\"', 'RelayServerUrl { get; set; } = \"%RELAY_URL%\"' | Set-Content '%CFG%'"
+    echo  OK
+)
+if not "%PROVISION_TOKEN%"=="" (
+    echo  [*] Injecting provision token into build...
+    powershell -Command "(Get-Content '%CFG%') -replace 'ProvisionToken \{ get; set; \} = \".*?\"', 'ProvisionToken { get; set; } = \"%PROVISION_TOKEN%\"' | Set-Content '%CFG%'"
+    echo  OK
+)
+echo.
+
 if exist ".\publish\ServiDesk" rmdir /s /q ".\publish\ServiDesk"
 
 echo  [1/2] Kompilace ServiDesk.exe ...

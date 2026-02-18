@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const config = require('./config');
 const logger = require('./logger');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -38,9 +39,34 @@ class DeviceRegistry {
     }
   }
 
+  _pruneOldDevices() {
+    const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000; // 90 days
+    let pruned = 0;
+    for (const [agentId, device] of this.devices) {
+      if (new Date(device.lastSeen).getTime() < cutoff) {
+        this.devices.delete(agentId);
+        pruned++;
+      }
+    }
+    if (pruned > 0) {
+      logger.info('Pruned old devices', { pruned, remaining: this.devices.size });
+      this.save();
+    }
+    return pruned;
+  }
+
   upsertDevice(agentId, info) {
     const existing = this.devices.get(agentId);
     const now = new Date().toISOString();
+
+    // Pokud je nové zařízení a dosáhli jsme limitu, zkusit pruning
+    if (!existing && this.devices.size >= config.maxDevices) {
+      this._pruneOldDevices();
+      if (this.devices.size >= config.maxDevices) {
+        logger.warn('Device registry full, rejecting new device', { agentId, size: this.devices.size });
+        return null;
+      }
+    }
 
     const record = {
       agentId,

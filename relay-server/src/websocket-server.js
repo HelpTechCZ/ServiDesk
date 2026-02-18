@@ -9,11 +9,31 @@ const { setupRelay, teardownRelay } = require('./relay-handler');
 class RelayWebSocketServer {
   constructor(httpServer) {
     this.sessionManager = new SessionManager();
+    this._ipConnections = new Map(); // ip → active connection count
 
     this.wss = new WebSocketServer({
       server: httpServer,
       path: '/ws',
       maxPayload: config.maxMessageSizeBytes,
+      verifyClient: (info, cb) => {
+        // Agenti (nativní) nemají Origin header – to je OK
+        // Prohlížeče (admin panel) posílají Origin – ověřit pokud je allowedOrigins nastaveno
+        const origin = info.req.headers.origin;
+        if (!origin) {
+          cb(true); // Nativní klient bez Origin
+          return;
+        }
+        if (config.allowedOrigins.length === 0) {
+          cb(true); // Žádné omezení
+          return;
+        }
+        if (config.allowedOrigins.includes(origin)) {
+          cb(true);
+        } else {
+          logger.warn('WebSocket connection rejected – invalid origin', { origin });
+          cb(false, 403, 'Forbidden origin');
+        }
+      },
     });
 
     this.wss.on('connection', (ws, req) => this._onConnection(ws, req));
@@ -38,7 +58,9 @@ class RelayWebSocketServer {
   }
 
   _onConnection(ws, req) {
-    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress;
+    const ip = config.trustProxy
+      ? (req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress)
+      : req.socket.remoteAddress;
 
     // Rate limit check
     if (authModule.isIpBanned(ip)) {
@@ -47,10 +69,24 @@ class RelayWebSocketServer {
       return;
     }
 
+    // Per-IP connection limit
+    const currentCount = this._ipConnections.get(ip) || 0;
+    if (currentCount >= config.maxConnectionsPerIp) {
+      logger.warn('Per-IP connection limit reached', { ip, count: currentCount });
+      ws.close(4003, 'Too many connections from this IP');
+      return;
+    }
+    this._ipConnections.set(ip, currentCount + 1);
+
     ws.isAlive = true;
     ws.clientType = null; // 'agent' | 'admin'
     ws.clientId = null;
     ws.ip = ip;
+
+    // Message rate limiting (100 msg/sec per connection)
+    ws._msgCount = 0;
+    ws._msgWindowStart = Date.now();
+    ws._rateLimitExceeded = false;
 
     ws.on('pong', () => {
       ws.isAlive = true;
@@ -79,6 +115,24 @@ class RelayWebSocketServer {
     });
 
     logger.debug('New connection', { ip });
+  }
+
+  _checkMessageRate(ws) {
+    const now = Date.now();
+    if (now - ws._msgWindowStart > 1000) {
+      ws._msgCount = 0;
+      ws._msgWindowStart = now;
+      ws._rateLimitExceeded = false;
+    }
+    ws._msgCount++;
+    if (ws._msgCount > config.maxMessagesPerSecond) {
+      if (!ws._rateLimitExceeded) {
+        ws._rateLimitExceeded = true;
+        logger.warn('WebSocket message rate limit exceeded', { ip: ws.ip, clientId: ws.clientId });
+      }
+      return false;
+    }
+    return true;
   }
 
   _handleFirstMessage(ws, msg) {
@@ -139,6 +193,7 @@ class RelayWebSocketServer {
   }
 
   _handleAgentMessage(ws, data, isBinary) {
+    if (!this._checkMessageRate(ws)) return;
     // Binární zprávy – pokud je agent v session, relay handler se o to postará
     if (isBinary) return;
 
@@ -158,8 +213,11 @@ class RelayWebSocketServer {
           const sessionId = msg.payload?.session_id;
           if (sessionId) {
             const session = this.sessionManager.activeSessions.get(sessionId);
-            if (session) teardownRelay(session);
-            this.sessionManager.endSession(sessionId, msg.payload?.reason || 'completed', 'customer');
+            // Ověřit že session patří tomuto agentovi
+            if (session && session.agentWs === ws) {
+              teardownRelay(session);
+              this.sessionManager.endSession(sessionId, msg.payload?.reason || 'completed', 'customer');
+            }
           }
           break;
         }
@@ -190,6 +248,7 @@ class RelayWebSocketServer {
   }
 
   _handleAdminMessage(ws, data, isBinary) {
+    if (!this._checkMessageRate(ws)) return;
     // Binární zprávy – pokud je admin v session, relay handler se o to postará
     if (isBinary) return;
 
@@ -222,8 +281,11 @@ class RelayWebSocketServer {
           const sessionId = msg.payload?.session_id;
           if (sessionId) {
             const session = this.sessionManager.activeSessions.get(sessionId);
-            if (session) teardownRelay(session);
-            this.sessionManager.endSession(sessionId, msg.payload?.reason || 'completed', 'admin');
+            // Ověřit že session patří tomuto adminovi
+            if (session && session.viewerWs === ws) {
+              teardownRelay(session);
+              this.sessionManager.endSession(sessionId, msg.payload?.reason || 'completed', 'admin');
+            }
           }
           break;
         }
@@ -303,6 +365,16 @@ class RelayWebSocketServer {
   }
 
   _onDisconnect(ws) {
+    // Dekrementovat per-IP counter
+    if (ws.ip) {
+      const count = this._ipConnections.get(ws.ip) || 0;
+      if (count <= 1) {
+        this._ipConnections.delete(ws.ip);
+      } else {
+        this._ipConnections.set(ws.ip, count - 1);
+      }
+    }
+
     if (ws.clientType === 'agent' && ws.clientId) {
       // Teardown relay pokud existuje
       const found = this.sessionManager.findSessionByWs(ws);

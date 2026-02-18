@@ -6,7 +6,7 @@ namespace RemoteAgent.Shared.Config;
 public class AgentConfig
 {
     [JsonPropertyName("relayServerUrl")]
-    public string RelayServerUrl { get; set; } = "wss://your-relay-domain.example.com/ws";
+    public string RelayServerUrl { get; set; } = "";
 
     [JsonPropertyName("agentId")]
     public string AgentId { get; set; } = Guid.NewGuid().ToString();
@@ -24,13 +24,19 @@ public class AgentConfig
     public string AgentVersion => System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "1.3.0";
 
     [JsonPropertyName("updateManifestUrl")]
-    public string UpdateManifestUrl { get; set; } = "https://your-relay-domain.example.com/update/manifest.json";
+    public string UpdateManifestUrl { get; set; } = "";
 
     [JsonPropertyName("autoUpdateEnabled")]
     public bool AutoUpdateEnabled { get; set; } = true;
 
     [JsonPropertyName("updateCheckIntervalHours")]
     public int UpdateCheckIntervalHours { get; set; } = 6;
+
+    [JsonPropertyName("provisionToken")]
+    public string ProvisionToken { get; set; } = "";
+
+    [JsonPropertyName("agentToken")]
+    public string AgentToken { get; set; } = "";
 
     [JsonPropertyName("unattendedAccessEnabled")]
     public bool UnattendedAccessEnabled { get; set; } = false;

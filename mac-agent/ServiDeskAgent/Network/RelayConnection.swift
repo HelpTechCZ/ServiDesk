@@ -78,6 +78,13 @@ class RelayConnection: ObservableObject {
         reconnectAttempts = 0
 
         let cleanURL = config.relayServerURL.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Vynutit šifrované spojení
+        guard cleanURL.hasPrefix("wss://") else {
+            connectionState = .error("Pouze šifrované spojení (wss://) je povoleno")
+            return
+        }
+
         connectToURL(cleanURL)
     }
 
@@ -87,9 +94,71 @@ class RelayConnection: ObservableObject {
             return
         }
 
+        // Auto-provisioning: pokud nemáme agent token, získat ho
+        if config.agentToken.isEmpty && !config.provisionToken.isEmpty {
+            provisionAndConnect(wsURL: urlString)
+            return
+        }
+
+        performWebSocketConnect(url: url)
+    }
+
+    private func provisionAndConnect(wsURL: String) {
+        let httpURL = wsURL
+            .replacingOccurrences(of: "wss://", with: "https://")
+            .replacingOccurrences(of: "ws://", with: "http://")
+            .replacingOccurrences(of: "/ws", with: "/api/provision")
+
+        guard let url = URL(string: httpURL) else {
+            connectionState = .error("Neplatná URL pro provisioning")
+            return
+        }
+
+        let hostname = Host.current().localizedName ?? ProcessInfo.processInfo.hostName
+        let body: [String: Any] = [
+            "provision_token": config.provisionToken,
+            "agent_id": config.agentId,
+            "hostname": hostname
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        request.timeoutInterval = 15
+
+        print(">>> Provisioning agent at: \(httpURL)")
+
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else { return }
+
+            if let data = data,
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let agentToken = json["agent_token"] as? String {
+                DispatchQueue.main.async {
+                    self.config.agentToken = agentToken
+                    self.config.save()
+                    print(">>> Agent provisioned successfully")
+
+                    let cleanURL = self.config.relayServerURL.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if let wsUrl = URL(string: cleanURL) {
+                        self.performWebSocketConnect(url: wsUrl)
+                    }
+                }
+            } else {
+                print(">>> Provisioning failed: \(error?.localizedDescription ?? "unknown error")")
+                DispatchQueue.main.async {
+                    self.connectionState = .error("Provisioning selhal")
+                    self.handleDisconnect()
+                }
+            }
+        }.resume()
+    }
+
+    private func performWebSocketConnect(url: URL) {
         cleanupCurrentConnection()
 
-        print(">>> Agent connecting to: \(urlString)")
+        print(">>> Agent connecting to: \(url.absoluteString)")
 
         session = URLSession(configuration: .default)
         webSocket = session?.webSocketTask(with: url)
@@ -99,7 +168,7 @@ class RelayConnection: ObservableObject {
         let hostname = Host.current().localizedName ?? ProcessInfo.processInfo.hostName
         let osVersion = ProcessInfo.processInfo.operatingSystemVersionString
 
-        let registerPayload: [String: Any] = [
+        var registerPayload: [String: Any] = [
             "agent_id": config.agentId,
             "customer_name": hostname,
             "hostname": hostname,
@@ -109,6 +178,9 @@ class RelayConnection: ObservableObject {
             "unattended_password_hash": config.unattendedAccessPasswordHash,
             "hw_info": HardwareInfoCollector.collect()
         ]
+        if !config.agentToken.isEmpty {
+            registerPayload["agent_token"] = config.agentToken
+        }
 
         sendJSON([
             "type": "agent_register",

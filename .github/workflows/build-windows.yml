@@ -54,6 +54,26 @@ jobs:
             -replace '#define MyAppVersion ".*?"', "#define MyAppVersion ""$ver""" |
             Set-Content "Installer\ServiDesk.iss"
 
+      - name: Inject server URL and provision token
+        shell: pwsh
+        working-directory: windows-agent
+        run: |
+          $cfg = "RemoteAgent.Shared\Config\AgentConfig.cs"
+          $relayUrl = "${{ secrets.RELAY_SERVER_URL }}"
+          $provToken = "${{ secrets.PROVISION_TOKEN }}"
+
+          if ($relayUrl) {
+            (Get-Content $cfg) -replace 'RelayServerUrl \{ get; set; \} = ".*?"', "RelayServerUrl { get; set; } = ""$relayUrl""" | Set-Content $cfg
+            $updateUrl = $relayUrl -replace 'wss://', 'https://' -replace 'ws://', 'http://' -replace '/ws$', '/update/manifest.json'
+            (Get-Content $cfg) -replace 'UpdateManifestUrl \{ get; set; \} = ".*?"', "UpdateManifestUrl { get; set; } = ""$updateUrl""" | Set-Content $cfg
+            Write-Host "Relay URL injected"
+          }
+
+          if ($provToken) {
+            (Get-Content $cfg) -replace 'ProvisionToken \{ get; set; \} = ".*?"', "ProvisionToken { get; set; } = ""$provToken""" | Set-Content $cfg
+            Write-Host "Provision token injected"
+          }
+
       - name: Restore NuGet packages
         working-directory: windows-agent
         run: dotnet restore RemoteAgent.sln

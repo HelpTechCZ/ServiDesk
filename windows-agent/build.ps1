@@ -3,7 +3,9 @@
 # Nebo v PowerShell: .\build.ps1
 
 param(
-    [switch]$NoInstaller  # Pouze kompilace bez Inno Setup installeru
+    [switch]$NoInstaller,  # Pouze kompilace bez Inno Setup installeru
+    [string]$RelayUrl = "",  # URL relay serveru (wss://...)
+    [string]$ProvisionToken = ""  # Provisioning token pro auto-registraci agenta
 )
 
 $ErrorActionPreference = "Stop"
@@ -43,6 +45,25 @@ Write-Host "  $svcCsproj" -ForegroundColor DarkGray
 $agentConfig = "RemoteAgent.Shared\Config\AgentConfig.cs"
 (Get-Content $agentConfig) -replace 'AgentVersion \{ get; set; \} = ".*?"', "AgentVersion { get; set; } = ""$Version""" | Set-Content $agentConfig
 Write-Host "  $agentConfig" -ForegroundColor DarkGray
+
+# AgentConfig.cs - RelayServerUrl + UpdateManifestUrl (injekce při buildu)
+if ($RelayUrl) {
+    (Get-Content $agentConfig) -replace 'RelayServerUrl \{ get; set; \} = ".*?"', "RelayServerUrl { get; set; } = ""$RelayUrl""" | Set-Content $agentConfig
+    # Odvodit update URL z relay URL (wss://host/ws → https://host/update/manifest.json)
+    $updateUrl = $RelayUrl -replace 'wss://', 'https://' -replace 'ws://', 'http://' -replace '/ws$', '/update/manifest.json'
+    (Get-Content $agentConfig) -replace 'UpdateManifestUrl \{ get; set; \} = ".*?"', "UpdateManifestUrl { get; set; } = ""$updateUrl""" | Set-Content $agentConfig
+    Write-Host "  $agentConfig (relay: $RelayUrl)" -ForegroundColor DarkGray
+} else {
+    Write-Host "  $agentConfig (relay URL: prazdna – pouzij -RelayUrl)" -ForegroundColor DarkYellow
+}
+
+# AgentConfig.cs - ProvisionToken default (injekce při buildu)
+if ($ProvisionToken) {
+    (Get-Content $agentConfig) -replace 'ProvisionToken \{ get; set; \} = ".*?"', "ProvisionToken { get; set; } = ""$ProvisionToken""" | Set-Content $agentConfig
+    Write-Host "  $agentConfig (provision token: set)" -ForegroundColor DarkGray
+} else {
+    Write-Host "  $agentConfig (provision token: prazdny – pouzij -ProvisionToken)" -ForegroundColor DarkYellow
+}
 
 # Inno Setup .iss
 $issFile = "Installer\ServiDesk.iss"
