@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,7 @@ public class BoolToCheckingTextConverter : IValueConverter
 public partial class MainWindow : Window
 {
     private System.Windows.Forms.NotifyIcon? _notifyIcon;
+    private bool _forceClose;
 
     public MainWindow()
     {
@@ -39,6 +41,11 @@ public partial class MainWindow : Window
                 vm.RequestMinimizeToTray = () => Dispatcher.Invoke(() =>
                 {
                     WindowState = WindowState.Minimized;
+                });
+                vm.RequestCloseApp = () => Dispatcher.Invoke(() =>
+                {
+                    _forceClose = true;
+                    Close();
                 });
                 await vm.InitializeAsync();
             }
@@ -92,6 +99,20 @@ public partial class MainWindow : Window
         Activate();
         if (_notifyIcon != null)
             _notifyIcon.Visible = false;
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        // Pokud je vzdálený přístup aktivní a nejde o vynucené zavření,
+        // minimalizovat do systray místo zavření
+        if (!_forceClose && DataContext is MainViewModel vm && vm.IsUnattendedConfigured)
+        {
+            e.Cancel = true;
+            WindowState = WindowState.Minimized;
+            return;
+        }
+
+        base.OnClosing(e);
     }
 
     protected override void OnClosed(EventArgs e)

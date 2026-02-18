@@ -349,6 +349,11 @@ public class MainViewModel : INotifyPropertyChanged
     /// </summary>
     public Action? RequestMinimizeToTray { get; set; }
 
+    /// <summary>
+    /// Nastavit z MainWindow pro zavření aplikace.
+    /// </summary>
+    public Action? RequestCloseApp { get; set; }
+
     private async Task Disconnect()
     {
         await _pipeClient.DisconnectAsync();
@@ -363,8 +368,8 @@ public class MainViewModel : INotifyPropertyChanged
         }
         else
         {
-            CurrentState = ViewState.Idle;
-            StatusText = "Odpojeno";
+            // Bez vzdáleného přístupu – zavřít aplikaci
+            RequestCloseApp?.Invoke();
         }
     }
 
@@ -436,13 +441,20 @@ public class MainViewModel : INotifyPropertyChanged
                     var reason = payload?.GetProperty("reason").GetString();
                     var endedBy = "";
                     try { endedBy = payload?.GetProperty("ended_by").GetString() ?? ""; } catch { }
-                    CurrentState = ViewState.Disconnected;
-                    SessionEndReason = reason == "completed"
-                        ? "Technik ukončil session."
-                        : endedBy == "viewer_disconnected"
-                            ? "Technik se odpojil."
-                            : $"Session ukončena: {reason}";
-                    StatusText = SessionEndReason;
+
+                    if (_isUnattendedConfigured)
+                    {
+                        // Vzdálený přístup aktivní → znovu připojit k relay a minimalizovat
+                        CurrentState = ViewState.Idle;
+                        StatusText = "Vzdálený přístup aktivní";
+                        _ = _pipeClient.ConnectRelayAsync(Environment.MachineName);
+                        RequestMinimizeToTray?.Invoke();
+                    }
+                    else
+                    {
+                        // Bez vzdáleného přístupu → zavřít aplikaci
+                        RequestCloseApp?.Invoke();
+                    }
                     break;
 
                 case IpcNotification.ChatMessage:
