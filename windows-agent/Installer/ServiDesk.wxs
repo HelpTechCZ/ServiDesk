@@ -11,7 +11,7 @@
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 
     <!-- Icon for Add/Remove Programs -->
-    <Icon Id="AppIcon" SourceFile="!(bindpath.publishDir)\ServiDesk.exe" />
+    <Icon Id="AppIcon" SourceFile="..\publish\ServiDesk\ServiDesk.exe" />
     <Property Id="ARPPRODUCTICON" Value="AppIcon" />
     <Property Id="ARPHELPLINK" Value="https://github.com/HelpTechCZ/ServiDesk" />
     <Property Id="ARPURLINFOABOUT" Value="https://helptech.cz" />
@@ -27,7 +27,7 @@
     <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
       <Component Id="MainExecutable" Guid="*">
         <File Id="ServiDeskExe"
-              Source="!(bindpath.publishDir)\ServiDesk.exe"
+              Source="..\publish\ServiDesk\ServiDesk.exe"
               KeyPath="yes" />
       </Component>
     </ComponentGroup>

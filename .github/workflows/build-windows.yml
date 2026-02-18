@@ -91,7 +91,6 @@ jobs:
           wix build Installer\ServiDesk.wxs
           -arch x64
           -o publish\ServiDesk-${{ steps.version.outputs.VERSION }}.msi
-          -bindpath:publishDir=publish\ServiDesk
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
