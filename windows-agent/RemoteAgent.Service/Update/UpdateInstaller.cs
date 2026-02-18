@@ -23,7 +23,13 @@ public class UpdateInstaller
     // Podpiš update: openssl dgst -sha256 -sign update-private.pem -out update.sig ServiDesk-Setup.exe
     // Base64 podpis: base64 -i update.sig
     private const string UpdatePublicKeyPem = @"-----BEGIN PUBLIC KEY-----
-REPLACE_WITH_YOUR_PUBLIC_KEY
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArIbY0IytoHe7BoLNvt5I
+fN28Dot2dXVukkp8ngkYkq6Mwl2FPj5jNu1nJt/Re18uA27ZLDfA3H38i7DlOQqN
+jFRmUlwY3a3sBTrxvueAoToeVW+2sXgMZIh/S9flht8dWGkNYtTeoY8SNcgqI/2d
+f283fmhRHjqMQrbyOmEyJqxsuxpBTinDbgW18KWvr87IC6Grtwqv3qy2DlGJPu9+
+ReqOj3OBQ3CQ4GQokKu77bjfR8RCEHf/qe/VGm5ApCADu5xnSkf2fNwYtgJl5c8X
+jIZC33GkxiDVyCiry4ed+Mk6G3vflBpXvUygNLjuGyK85qwGbkK3xiFPcahiq8NI
+YwIDAQAB
 -----END PUBLIC KEY-----";
 
     public UpdateInstaller(ILogger logger)
