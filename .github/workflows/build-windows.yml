@@ -1,0 +1,95 @@
+name: Build Windows Agent
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version from tag
+        id: version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $ver = $tag -replace '^v', ''
+          echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
+
+      - name: Set version in project files
+        shell: pwsh
+        working-directory: windows-agent
+        run: |
+          $ver = "${{ steps.version.outputs.VERSION }}"
+
+          # GUI .csproj
+          (Get-Content "RemoteAgent.GUI\RemoteAgent.GUI.csproj") `
+            -replace '<Version>.*?</Version>', "<Version>$ver</Version>" |
+            Set-Content "RemoteAgent.GUI\RemoteAgent.GUI.csproj"
+
+          # Service .csproj
+          $svc = Get-Content "RemoteAgent.Service\RemoteAgent.Service.csproj" -Raw
+          if ($svc -match '<Version>') {
+            $svc = $svc -replace '<Version>.*?</Version>', "<Version>$ver</Version>"
+          } else {
+            $svc = $svc -replace '(<OutputType>Exe</OutputType>)', "`$1`r`n    <Version>$ver</Version>"
+          }
+          Set-Content "RemoteAgent.Service\RemoteAgent.Service.csproj" $svc
+
+          # Inno Setup .iss
+          (Get-Content "Installer\ServiDesk.iss") `
+            -replace '#define MyAppVersion ".*?"', "#define MyAppVersion ""$ver""" |
+            Set-Content "Installer\ServiDesk.iss"
+
+      - name: Restore NuGet packages
+        working-directory: windows-agent
+        run: dotnet restore RemoteAgent.sln
+
+      - name: Publish (self-contained, single file)
+        working-directory: windows-agent
+        run: >
+          dotnet publish RemoteAgent.GUI\RemoteAgent.GUI.csproj
+          -c Release
+          -r win-x64
+          --self-contained
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:DebugType=none
+          -p:DebugSymbols=false
+          -o .\publish\ServiDesk
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          echo "C:\Program Files (x86)\Inno Setup 6" >> $env:GITHUB_PATH
+
+      - name: Build installer
+        working-directory: windows-agent
+        shell: cmd
+        run: iscc Installer\ServiDesk.iss
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ServiDesk-Setup-${{ steps.version.outputs.VERSION }}
+          path: windows-agent/publish/ServiDesk-Setup-*.exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: windows-agent/publish/ServiDesk-Setup-*.exe
+          generate_release_notes: true
