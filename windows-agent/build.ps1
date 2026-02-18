@@ -22,7 +22,7 @@ Write-Host ""
 $Root = $PSScriptRoot
 Set-Location $Root
 
-# ── 0. Nastavit verzi ve vsech souborech ──
+# --- 0. Nastavit verzi ve vsech souborech ---
 Write-Host "[0/4] Nastavuji verzi $Version..." -ForegroundColor Yellow
 
 # GUI .csproj
@@ -46,10 +46,10 @@ $agentConfig = "RemoteAgent.Shared\Config\AgentConfig.cs"
 (Get-Content $agentConfig) -replace 'AgentVersion \{ get; set; \} = ".*?"', "AgentVersion { get; set; } = ""$Version""" | Set-Content $agentConfig
 Write-Host "  $agentConfig" -ForegroundColor DarkGray
 
-# AgentConfig.cs - RelayServerUrl + UpdateManifestUrl (injekce při buildu)
+# AgentConfig.cs - RelayServerUrl + UpdateManifestUrl (injekce pri buildu)
 if ($RelayUrl) {
     (Get-Content $agentConfig) -replace 'RelayServerUrl \{ get; set; \} = ".*?"', "RelayServerUrl { get; set; } = ""$RelayUrl""" | Set-Content $agentConfig
-    # Odvodit update URL z relay URL (wss://host/ws → https://host/update/manifest.json)
+    # Odvodit update URL z relay URL (wss://host/ws -> https://host/update/manifest.json)
     $updateUrl = $RelayUrl -replace 'wss://', 'https://' -replace 'ws://', 'http://' -replace '/ws$', '/update/manifest.json'
     (Get-Content $agentConfig) -replace 'UpdateManifestUrl \{ get; set; \} = ".*?"', "UpdateManifestUrl { get; set; } = ""$updateUrl""" | Set-Content $agentConfig
     Write-Host "  $agentConfig (relay: $RelayUrl)" -ForegroundColor DarkGray
@@ -57,7 +57,7 @@ if ($RelayUrl) {
     Write-Host "  $agentConfig (relay URL: prazdna - pouzij -RelayUrl)" -ForegroundColor DarkYellow
 }
 
-# AgentConfig.cs - ProvisionToken default (injekce při buildu)
+# AgentConfig.cs - ProvisionToken default (injekce pri buildu)
 if ($ProvisionToken) {
     (Get-Content $agentConfig) -replace 'ProvisionToken \{ get; set; \} = ".*?"', "ProvisionToken { get; set; } = ""$ProvisionToken""" | Set-Content $agentConfig
     Write-Host "  $agentConfig (provision token: set)" -ForegroundColor DarkGray
@@ -74,14 +74,14 @@ if (Test-Path $issFile) {
 
 Write-Host "  OK" -ForegroundColor Green
 
-# ── 1. Vycistit predchozi build ──
+# --- 1. Vycistit predchozi build ---
 Write-Host "[1/4] Cistim predchozi build..." -ForegroundColor Yellow
 if (Test-Path ".\publish\ServiDesk") {
     Remove-Item ".\publish\ServiDesk" -Recurse -Force
 }
 Write-Host "  OK" -ForegroundColor Green
 
-# ── 2. Restore NuGet balicku ──
+# --- 2. Restore NuGet balicku ---
 Write-Host "[2/4] Obnovuji NuGet balicky..." -ForegroundColor Yellow
 dotnet restore RemoteAgent.sln
 if ($LASTEXITCODE -ne 0) {
@@ -90,7 +90,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 Write-Host "  OK" -ForegroundColor Green
 
-# ── 3. Kompilace + Publish ──
+# --- 3. Kompilace + Publish ---
 Write-Host "[3/4] Kompiluji ServiDesk.exe (Release, self-contained)..." -ForegroundColor Yellow
 dotnet publish RemoteAgent.GUI\RemoteAgent.GUI.csproj `
     -c Release `
@@ -117,7 +117,7 @@ if (-not (Test-Path $exePath)) {
 $exeSize = [math]::Round((Get-Item $exePath).Length / 1MB, 1)
 Write-Host "  OK - ServiDesk.exe ($exeSize MB)" -ForegroundColor Green
 
-# ── 4. Installer (Inno Setup) ──
+# --- 4. Installer (Inno Setup) ---
 if ($NoInstaller) {
     Write-Host "[4/4] Installer preskocen (-NoInstaller)" -ForegroundColor DarkGray
 } else {
@@ -143,7 +143,7 @@ if ($NoInstaller) {
     }
 }
 
-# ── Hotovo ──
+# --- Hotovo ---
 Write-Host ""
 Write-Host "  ==========================================" -ForegroundColor Green
 Write-Host "   Build uspesne dokoncen! v$Version" -ForegroundColor Green

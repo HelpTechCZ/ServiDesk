@@ -20,7 +20,7 @@ public partial class App : System.Windows.Application
         _singleInstanceMutex = new Mutex(true, "Global\\ServiDesk_SingleInstance", out var isNew);
         if (!isNew)
         {
-            MessageBox.Show("ServiDesk již běží.", "ServiDesk", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("ServiDesk již běží.", "ServiDesk", MessageBoxButton.OK, MessageBoxImage.Information);
             Shutdown();
             return;
         }
