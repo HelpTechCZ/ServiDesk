@@ -77,19 +77,34 @@ jobs:
           choco install innosetup -y --no-progress
           echo "C:\Program Files (x86)\Inno Setup 6" >> $env:GITHUB_PATH
 
-      - name: Build installer
+      - name: Build EXE installer (Inno Setup)
         working-directory: windows-agent
         shell: cmd
         run: iscc Installer\ServiDesk.iss
 
+      - name: Install WiX Toolset
+        run: dotnet tool install --global wix
+
+      - name: Build MSI installer (WiX)
+        working-directory: windows-agent
+        run: >
+          wix build Installer\ServiDesk.wxs
+          -arch x64
+          -o publish\ServiDesk-${{ steps.version.outputs.VERSION }}.msi
+          -bindpath:publishDir=publish\ServiDesk
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ServiDesk-Setup-${{ steps.version.outputs.VERSION }}
-          path: windows-agent/publish/ServiDesk-Setup-*.exe
+          name: ServiDesk-${{ steps.version.outputs.VERSION }}
+          path: |
+            windows-agent/publish/ServiDesk-Setup-*.exe
+            windows-agent/publish/ServiDesk-*.msi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: windows-agent/publish/ServiDesk-Setup-*.exe
+          files: |
+            windows-agent/publish/ServiDesk-Setup-*.exe
+            windows-agent/publish/ServiDesk-*.msi
           generate_release_notes: true
