@@ -35,7 +35,7 @@ Open-source remote desktop & support tool. Self-hosted relay server with native 
 | Relay Server | Node.js, WebSocket | `relay-server/` |
 | Windows Agent | C# .NET 8, WPF | `windows-agent/` |
 | macOS Agent | Swift, SwiftUI | `mac-agent/` |
-| macOS Viewer | Swift, SwiftUI | `mac-viewer/` |
+| macOS Viewer | Swift, SwiftUI | *closed source* |
 
 ## Quick Start
 
