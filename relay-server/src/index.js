@@ -104,6 +104,37 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── Update manifest a soubory ──
+  if (req.method === 'GET' && parsed.pathname.startsWith('/update/')) {
+    const safeName = path.basename(parsed.pathname);
+    const filePath = path.join(__dirname, '..', 'update', safeName);
+
+    fs.stat(filePath, (err, stats) => {
+      if (err || !stats.isFile()) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Not found' }));
+        return;
+      }
+
+      const ext = path.extname(safeName).toLowerCase();
+      const contentTypes = {
+        '.json': 'application/json',
+        '.exe': 'application/octet-stream',
+        '.msi': 'application/octet-stream',
+        '.zip': 'application/zip',
+      };
+      const contentType = contentTypes[ext] || 'application/octet-stream';
+
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Content-Length': stats.size,
+        'Cache-Control': 'no-cache',
+      });
+      fs.createReadStream(filePath).pipe(res);
+    });
+    return;
+  }
+
   // ── Admin API – vyžadují Bearer token ──
   if (req.url.startsWith('/api/')) {
     const token = (req.headers['authorization'] || '').replace('Bearer ', '');
