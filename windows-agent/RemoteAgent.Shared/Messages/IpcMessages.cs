@@ -22,6 +22,7 @@ public static class IpcCommand
     public const string RequestSupport = "request_support";
     public const string CancelSupport = "cancel_support";
     public const string Disconnect = "disconnect";
+    public const string EndSession = "end_session";
     public const string SendChat = "send_chat";
     public const string FileSavePath = "file_save_path";
     public const string SetUnattendedPassword = "set_unattended_password";

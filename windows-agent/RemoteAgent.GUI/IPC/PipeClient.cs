@@ -98,6 +98,11 @@ public class PipeClient : IDisposable
         await SendCommandAsync(IpcCommand.Disconnect);
     }
 
+    public async Task EndSessionAsync()
+    {
+        await SendCommandAsync(IpcCommand.EndSession);
+    }
+
     public async Task SetUnattendedPasswordAsync(string password)
     {
         await SendCommandAsync(IpcCommand.SetUnattendedPassword,

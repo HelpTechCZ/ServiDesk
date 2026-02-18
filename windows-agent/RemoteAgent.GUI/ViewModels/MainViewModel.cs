@@ -356,19 +356,19 @@ public class MainViewModel : INotifyPropertyChanged
 
     private async Task Disconnect()
     {
-        await _pipeClient.DisconnectAsync();
-
         if (_isUnattendedConfigured)
         {
-            // Znovu připojit k relay (agent zůstane online pro vzdálený přístup)
+            // Ukončit jen session, relay spojení nechat (agent zůstane online)
+            await _pipeClient.EndSessionAsync();
             CurrentState = ViewState.Idle;
             StatusText = "Vzdálený přístup aktivní";
-            await _pipeClient.ConnectRelayAsync(Environment.MachineName);
+            ChatMessages.Clear();
             RequestMinimizeToTray?.Invoke();
         }
         else
         {
-            // Bez vzdáleného přístupu – zavřít aplikaci
+            // Kompletní odpojení + zavřít aplikaci
+            await _pipeClient.DisconnectAsync();
             RequestCloseApp?.Invoke();
         }
     }
@@ -444,10 +444,10 @@ public class MainViewModel : INotifyPropertyChanged
 
                     if (_isUnattendedConfigured)
                     {
-                        // Vzdálený přístup aktivní → znovu připojit k relay a minimalizovat
+                        // Vzdálený přístup aktivní → relay spojení zůstává, jen minimalizovat
                         CurrentState = ViewState.Idle;
                         StatusText = "Vzdálený přístup aktivní";
-                        _ = _pipeClient.ConnectRelayAsync(Environment.MachineName);
+                        ChatMessages.Clear();
                         RequestMinimizeToTray?.Invoke();
                     }
                     else

@@ -378,6 +378,21 @@ public class AgentService : BackgroundService
                 break;
             }
 
+            case IpcCommand.EndSession:
+            {
+                // Ukončit session ale nechat relay spojení aktivní (pro unattended režim)
+                _e2eFallbackCts?.Cancel();
+                _e2eFallbackCts = null;
+                await StopStreamingAsync();
+                if (_sessionManager.SessionId != null)
+                {
+                    await _relayClient.EndSessionAsync(_sessionManager.SessionId, "completed");
+                }
+                _relayClient.Crypto.Reset();
+                _sessionManager.Reset();
+                break;
+            }
+
             case IpcCommand.Disconnect:
             {
                 _e2eFallbackCts?.Cancel();
