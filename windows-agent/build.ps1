@@ -54,7 +54,7 @@ if ($RelayUrl) {
     (Get-Content $agentConfig) -replace 'UpdateManifestUrl \{ get; set; \} = ".*?"', "UpdateManifestUrl { get; set; } = ""$updateUrl""" | Set-Content $agentConfig
     Write-Host "  $agentConfig (relay: $RelayUrl)" -ForegroundColor DarkGray
 } else {
-    Write-Host "  $agentConfig (relay URL: prazdna – pouzij -RelayUrl)" -ForegroundColor DarkYellow
+    Write-Host "  $agentConfig (relay URL: prazdna - pouzij -RelayUrl)" -ForegroundColor DarkYellow
 }
 
 # AgentConfig.cs - ProvisionToken default (injekce při buildu)
@@ -62,7 +62,7 @@ if ($ProvisionToken) {
     (Get-Content $agentConfig) -replace 'ProvisionToken \{ get; set; \} = ".*?"', "ProvisionToken { get; set; } = ""$ProvisionToken""" | Set-Content $agentConfig
     Write-Host "  $agentConfig (provision token: set)" -ForegroundColor DarkGray
 } else {
-    Write-Host "  $agentConfig (provision token: prazdny – pouzij -ProvisionToken)" -ForegroundColor DarkYellow
+    Write-Host "  $agentConfig (provision token: prazdny - pouzij -ProvisionToken)" -ForegroundColor DarkYellow
 }
 
 # Inno Setup .iss
