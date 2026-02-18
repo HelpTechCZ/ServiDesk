@@ -1,0 +1,362 @@
+<Window x:Class="RemoteAgent.GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RemoteAgent.GUI.ViewModels"
+        Title="ServiDesk – Vzdálená podpora"
+        Width="440" Height="620"
+        MinWidth="380" MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
+        Icon="pack://application:,,,/Assets/app.ico"
+        Background="{StaticResource BackgroundGradient}"
+        FontFamily="Segoe UI">
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Header -->
+            <RowDefinition Height="Auto"/>  <!-- Gradient line -->
+            <RowDefinition Height="*"/>     <!-- Content -->
+            <RowDefinition Height="Auto"/>  <!-- Update banner -->
+            <RowDefinition Height="Auto"/>  <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- Row 0: Header – tmavý, bílý text               -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="#12FFFFFF" Padding="20,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="pack://application:,,,/Assets/logo.png"
+                       Width="40" Height="40"
+                       Margin="0,0,12,0"
+                       VerticalAlignment="Center"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="Vzdálená podpora"
+                                   FontSize="20" FontWeight="Bold"
+                                   Foreground="White"/>
+                        <TextBlock Text="{Binding VersionText}"
+                                   FontSize="11"
+                                   Foreground="#66FFFFFF"
+                                   VerticalAlignment="Bottom"
+                                   Margin="8,0,0,3"/>
+                    </StackPanel>
+                    <TextBlock Text="ServiDesk by HelpTech.cz"
+                               FontSize="11"
+                               Foreground="#99FFFFFF"
+                               Margin="0,1,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- Row 1: Gradient accent line (2px)               -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <Rectangle Grid.Row="1" Height="2" Fill="{StaticResource GradientLineBrush}"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- Row 2: Content area                             -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <Grid Grid.Row="2" Margin="20,16,20,8">
+
+            <!-- ═══ Stav: Idle / Disconnected – TabControl ═══ -->
+            <TabControl Style="{StaticResource ModernTabControl}"
+                        Visibility="{Binding ShowForm, Converter={StaticResource BoolToVisConverter}}">
+
+                <!-- Tab 1: Podpora -->
+                <TabItem Header="Podpora" Style="{StaticResource ModernTabItem}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <Border Background="{StaticResource CardBrush}"
+                                CornerRadius="12"
+                                Padding="28"
+                                Effect="{StaticResource CardShadow}">
+                            <StackPanel>
+                                <TextBlock Text="Vaše jméno:" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextBrush}" Margin="0,0,0,6"/>
+                                <TextBox Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource ModernTextBox}"
+                                         Margin="0,0,0,12"/>
+
+                                <TextBlock Text="Název počítače:" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextBrush}" Margin="0,0,0,6"/>
+                                <TextBox Text="{Binding ComputerName, Mode=OneWay}"
+                                         Style="{StaticResource ModernTextBox}"
+                                         IsReadOnly="True" Focusable="False"
+                                         Opacity="0.7"
+                                         Margin="0,0,0,18"/>
+
+                                <TextBlock Text="Popis problému (volitelné):" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextBrush}" Margin="0,0,0,6"/>
+                                <TextBox Text="{Binding ProblemDescription, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource ModernTextBox}"
+                                         TextWrapping="Wrap" AcceptsReturn="True"
+                                         Height="80" VerticalScrollBarVisibility="Auto"
+                                         Margin="0,0,0,24"/>
+
+                                <Button Content="Povolit připojení"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Command="{Binding RequestSupportCommand}"
+                                        HorizontalAlignment="Stretch"/>
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- Tab 2: Vzdálený přístup -->
+                <TabItem Header="Vzdálený přístup" Style="{StaticResource ModernTabItem}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <Border Background="{StaticResource CardBrush}"
+                                CornerRadius="12"
+                                Padding="28"
+                                Effect="{StaticResource CardShadow}">
+                            <StackPanel>
+                                <TextBlock Text="Nastavení vzdáleného přístupu"
+                                           FontSize="16" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextBrush}"
+                                           Margin="0,0,0,4"/>
+                                <TextBlock Text="Nastavte heslo pro trvalý přístup bez nutnosti schválení."
+                                           FontSize="12"
+                                           Foreground="{StaticResource SubtextBrush}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,0,0,12"/>
+
+                                <!-- Badge: Vzdálený přístup je aktivní -->
+                                <Border Background="#2200C853" CornerRadius="6" Padding="10,6"
+                                        Margin="0,0,0,16"
+                                        Visibility="{Binding IsUnattendedConfigured, Converter={StaticResource BoolToVisConverter}}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse Width="8" Height="8" Fill="#00C853"
+                                                 VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Vzdálený přístup je aktivní."
+                                                   FontSize="12" FontWeight="Medium"
+                                                   Foreground="#00C853"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Formulář pro nastavení/změnu hesla -->
+                                <StackPanel Visibility="{Binding ShowPasswordForm, Converter={StaticResource BoolToVisConverter}}">
+                                    <TextBlock Text="Heslo pro vzdálený přístup:" FontSize="13" FontWeight="Medium"
+                                               Foreground="{StaticResource TextBrush}" Margin="0,0,0,6"/>
+                                    <PasswordBox x:Name="UnattendedPasswordBox"
+                                                 Style="{StaticResource ModernPasswordBox}"
+                                                 Margin="0,0,0,16"/>
+
+                                    <TextBlock Text="Potvrzení hesla:" FontSize="13" FontWeight="Medium"
+                                               Foreground="{StaticResource TextBrush}" Margin="0,0,0,6"/>
+                                    <PasswordBox x:Name="UnattendedPasswordConfirmBox"
+                                                 Style="{StaticResource ModernPasswordBox}"
+                                                 Margin="0,0,0,24"/>
+
+                                    <Button Content="Uložit heslo" Click="SaveUnattendedPassword_Click"
+                                            Style="{StaticResource PrimaryButton}"
+                                            HorizontalAlignment="Stretch"/>
+                                    <TextBlock Text="{Binding UnattendedStatusText}"
+                                               FontSize="12" Margin="0,10,0,0"
+                                               TextWrapping="Wrap"
+                                               Foreground="{StaticResource SubtextBrush}"
+                                               Visibility="{Binding HasUnattendedStatus, Converter={StaticResource BoolToVisConverter}}"/>
+                                </StackPanel>
+
+                                <!-- Tlačítka pro změnu/zrušení (viditelné jen když je heslo nastavené a formulář skrytý) -->
+                                <StackPanel Visibility="{Binding ShowChangePasswordButton, Converter={StaticResource BoolToVisConverter}}">
+                                    <Button Content="Změnit heslo"
+                                            Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding ChangePasswordCommand}"
+                                            HorizontalAlignment="Stretch"
+                                            Margin="0,0,0,8"/>
+                                    <Button Content="Zrušit vzdálený přístup"
+                                            Style="{StaticResource DangerButton}"
+                                            Command="{Binding DisableUnattendedCommand}"
+                                            HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+
+                                <!-- Separator + Autostart -->
+                                <Rectangle Height="1" Fill="#18FFFFFF" Margin="0,20,0,16"/>
+                                <CheckBox IsChecked="{Binding StartWithWindows}"
+                                          Foreground="{StaticResource TextBrush}"
+                                          FontSize="13">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="Spustit po startu počítače"
+                                                   Foreground="{StaticResource TextBrush}"/>
+                                    </CheckBox.Content>
+                                </CheckBox>
+
+                                <!-- Separator + Aktualizace -->
+                                <Rectangle Height="1" Fill="#18FFFFFF" Margin="0,16,0,16"/>
+                                <Button Content="{Binding IsCheckingUpdate, Converter={StaticResource BoolToCheckingTextConverter}}"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding CheckUpdateCommand}"
+                                        HorizontalAlignment="Stretch"/>
+                                <TextBlock Text="{Binding UpdateCheckMessage}"
+                                           FontSize="12" Margin="0,8,0,0"
+                                           TextWrapping="Wrap"
+                                           Foreground="{StaticResource SubtextBrush}"
+                                           Visibility="{Binding HasUpdateCheckMessage, Converter={StaticResource BoolToVisConverter}}"/>
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+
+            <!-- ═══ Stav: Waiting – Spinner ═══ -->
+            <Border Visibility="{Binding IsWaiting, Converter={StaticResource BoolToVisConverter}}"
+                    Background="{StaticResource CardBrush}"
+                    CornerRadius="12"
+                    Effect="{StaticResource CardShadow}"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Padding="28,40">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Čekám na technika..."
+                               FontSize="18" FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               Foreground="{StaticResource TextBrush}"
+                               Margin="0,0,0,20"/>
+                    <ProgressBar IsIndeterminate="True"
+                                 Height="4" Width="200"
+                                 Foreground="{StaticResource PrimaryBrush}"/>
+                    <Button Content="Zrušit"
+                            Style="{StaticResource DangerButton}"
+                            Command="{Binding CancelCommand}"
+                            HorizontalAlignment="Center"
+                            Margin="0,28,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- ═══ Stav: Connected ═══ -->
+            <Border Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisConverter}}"
+                    Background="{StaticResource CardBrush}"
+                    CornerRadius="12"
+                    Effect="{StaticResource CardShadow}"
+                    Padding="20">
+                <DockPanel>
+                    <!-- Header: zelený badge -->
+                    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Ellipse Width="10" Height="10" Fill="{StaticResource SuccessBrush}"
+                                     VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding StatusText}" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Tlačítko odpojit -->
+                    <Button DockPanel.Dock="Bottom" Content="Ukončit připojení"
+                            Style="{StaticResource DangerButton}"
+                            Command="{Binding DisconnectCommand}"
+                            HorizontalAlignment="Stretch" Margin="0,12,0,0"/>
+
+                    <!-- Chat panel -->
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Text="Chat s technikem:" FontSize="12"
+                                   Foreground="{StaticResource SubtextBrush}" Margin="0,0,0,8"/>
+
+                        <!-- Input -->
+                        <DockPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                            <Button DockPanel.Dock="Right" Content="Odeslat" Margin="8,0,0,0"
+                                    Style="{StaticResource PrimaryButton}" Padding="16,8"
+                                    FontSize="13"
+                                    Command="{Binding SendChatCommand}"/>
+                            <TextBox Text="{Binding ChatInput, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource ModernTextBox}"
+                                     VerticalContentAlignment="Center"/>
+                        </DockPanel>
+
+                        <!-- Zprávy -->
+                        <ListBox ItemsSource="{Binding ChatMessages}"
+                                 Style="{StaticResource ModernListBox}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="4,4">
+                                        <TextBlock FontSize="10" Foreground="{StaticResource SubtextBrush}">
+                                            <Run Text="{Binding Sender, Mode=OneWay}"/> · <Run Text="{Binding Timestamp, Mode=OneWay, StringFormat=HH:mm}"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding Message}" FontSize="13" TextWrapping="Wrap"
+                                                   Foreground="{StaticResource TextBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- ═══ Stav: Session ukončena ═══ -->
+            <Border Visibility="{Binding IsSessionEnded, Converter={StaticResource BoolToVisConverter}}"
+                    Background="{StaticResource CardBrush}"
+                    CornerRadius="12"
+                    Effect="{StaticResource CardShadow}"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Padding="28,36">
+                <StackPanel HorizontalAlignment="Center">
+                    <!-- Ikona – gradient kruh -->
+                    <Border Width="48" Height="48" CornerRadius="24"
+                            Background="{StaticResource GradientBrush}"
+                            HorizontalAlignment="Center" Margin="0,0,0,16">
+                        <TextBlock Text="&#x2713;" FontSize="24" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="{Binding SessionEndReason}"
+                               FontSize="16" FontWeight="SemiBold"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               Foreground="{StaticResource TextBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="Chcete vytvořit novou žádost o podporu?"
+                               FontSize="13"
+                               TextAlignment="Center"
+                               Foreground="{StaticResource SubtextBrush}"
+                               Margin="0,0,0,24"/>
+                    <Button Content="Znovu připojit"
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding ReconnectCommand}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,10"/>
+                    <Button Content="Zpět na úvod"
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding BackToIdleCommand}"
+                            HorizontalAlignment="Stretch"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- Row 3: Update banner                            -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="3" Background="#20FFFFFF" CornerRadius="8" Padding="14,10" Margin="20,0,20,0"
+                Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVisConverter}}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#x2139;" FontSize="14" Foreground="{StaticResource PrimaryBrush}"
+                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock FontSize="12" Foreground="#CCFFFFFF" TextWrapping="Wrap"
+                           VerticalAlignment="Center">
+                    <Run Text="Nová verze" FontWeight="SemiBold"/>
+                    <Run Text="{Binding UpdateVersion, Mode=OneWay}"/>
+                    <Run Text="je dostupná. Aktualizace proběhne automaticky."/>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- Row 4: Status bar – dark theme                  -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="4" BorderBrush="#18FFFFFF" BorderThickness="0,1,0,0"
+                Background="#08FFFFFF" Padding="20,10">
+            <TextBlock Text="{Binding StatusText}"
+                       FontSize="11"
+                       Foreground="#80FFFFFF"/>
+        </Border>
+    </Grid>
+</Window>

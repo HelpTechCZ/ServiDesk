@@ -1,0 +1,7 @@
+{
+  "version": "1.4.2",
+  "download_url": "https://your-relay-domain.example.com/update/ServiDesk-Setup-1.4.2.exe",
+  "sha256": "",
+  "release_notes": "HW info při registraci, tlačítko pro kontrolu aktualizací",
+  "required": true
+}

@@ -1,0 +1,17 @@
+{
+  "name": "servidesk-relay-server",
+  "version": "1.0.0",
+  "description": "WebSocket relay server for ServiDesk remote desktop",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0",
+    "dotenv": "^16.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

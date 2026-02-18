@@ -1,0 +1,50 @@
+# Environment & secrets
+.env
+env
+*.env.local
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Relay server runtime data
+relay-server/data/
+relay-server/logs/
+
+# .NET build
+**/bin/
+**/obj/
+**/publish/
+*.user
+*.suo
+*.vs/
+
+# macOS build
+**/build/
+**/DerivedData/
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
+**/*.xcodeproj/project.xcworkspace/
+
+# Windows installers (binaries)
+WIN verze APP/
+Installer/publish/
+*.exe
+*.msi
+
+# macOS DMG (binaries)
+**/*.dmg
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude internal
+claude/

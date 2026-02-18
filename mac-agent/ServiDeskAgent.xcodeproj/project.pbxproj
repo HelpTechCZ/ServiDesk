@@ -1,0 +1,468 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0451745D36B67F3213891A92 /* AgentMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A439CB251E15E7C07E2E134 /* AgentMessages.swift */; };
+		1407F412E1EF3BC182217F51 /* ServiDeskAgentApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 756533BBEA327479DB7237D8 /* ServiDeskAgentApp.swift */; };
+		1BF73610581A362A068274CC /* UnattendedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5C811A11BFF8D12FFC32CE /* UnattendedSettingsView.swift */; };
+		40AF389A49A8F03492F3A672 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68926CCAD94088892B731095 /* Assets.xcassets */; };
+		4FA05A782D64015C456678D4 /* KeyCodeMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1706E32E2492716003FD0 /* KeyCodeMapper.swift */; };
+		5CB0E8494D8C01BF0DF51FA3 /* ScreenCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDF93C5E909ABE2B11035DB /* ScreenCaptureManager.swift */; };
+		6A2EDF32A0047446BA0C0E6C /* FrameEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F0ACD8EB37FA94EFC487FF /* FrameEncoder.swift */; };
+		6D65F24FDDE059715C3EF263 /* MessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C10502697821F906F33298 /* MessageParser.swift */; };
+		6D6D8AC4839C4A1F4775CEA8 /* ConnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB49873AF0701CB41DE808D /* ConnectedView.swift */; };
+		76F0C6E1A96475677503EF49 /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CBEE1CF53506DDA0A3264D /* WaitingView.swift */; };
+		9B4C88CD195991B382A60EB0 /* InputInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10814A49FF8992EAEB5D09E /* InputInjector.swift */; };
+		9D2C86E658AC0D845BABEABB /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C034EB3B8BBCE35BB9AF4A21 /* MainView.swift */; };
+		A15451D6DA305142C28900A8 /* SupportFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E84FA461D9C9C6051E7682 /* SupportFormView.swift */; };
+		A213F2AEFC2795B801408F8B /* FileTransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B0E2E72C0C760D27765DC0 /* FileTransferManager.swift */; };
+		C1C6597EBF8AA1BB60C264C3 /* E2ECrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74BA930027BD3D9B78DBE589 /* E2ECrypto.swift */; };
+		C7E386401111C9708C287557 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BD9D831806A498639AF15C /* AppState.swift */; };
+		D12752EE963C19CF57DDFC1C /* DisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2EE213F0D9EC6BF59D1F56 /* DisconnectedView.swift */; };
+		D5F5E0C02710C92C62CD4E04 /* AgentConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C85525AE56768AD3772A8C /* AgentConfig.swift */; };
+		E93975F4F4DE2F8EC2878875 /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE561550889D7F20D447A6DB /* ClipboardManager.swift */; };
+		ED2CE2A14AF2042B46720FFD /* RelayConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C0F8C6BB9CEF793A69293A /* RelayConnection.swift */; };
+		FBCCED46EE440A5A0D88FCCD /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFA7B445A569FBD03234C56 /* StatusBarView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0BB49873AF0701CB41DE808D /* ConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedView.swift; sourceTree = "<group>"; };
+		182DBA1E284003A9E4895D21 /* ServiDeskAgent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ServiDeskAgent.entitlements; sourceTree = "<group>"; };
+		19E1706E32E2492716003FD0 /* KeyCodeMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCodeMapper.swift; sourceTree = "<group>"; };
+		1D5C811A11BFF8D12FFC32CE /* UnattendedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnattendedSettingsView.swift; sourceTree = "<group>"; };
+		59C0F8C6BB9CEF793A69293A /* RelayConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayConnection.swift; sourceTree = "<group>"; };
+		5AED0170E209853CD5C0B26F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		68926CCAD94088892B731095 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		74BA930027BD3D9B78DBE589 /* E2ECrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2ECrypto.swift; sourceTree = "<group>"; };
+		756533BBEA327479DB7237D8 /* ServiDeskAgentApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiDeskAgentApp.swift; sourceTree = "<group>"; };
+		7CFA7B445A569FBD03234C56 /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
+		86F0ACD8EB37FA94EFC487FF /* FrameEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameEncoder.swift; sourceTree = "<group>"; };
+		8A439CB251E15E7C07E2E134 /* AgentMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentMessages.swift; sourceTree = "<group>"; };
+		8C2EE213F0D9EC6BF59D1F56 /* DisconnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectedView.swift; sourceTree = "<group>"; };
+		96BD9D831806A498639AF15C /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		9CDF93C5E909ABE2B11035DB /* ScreenCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureManager.swift; sourceTree = "<group>"; };
+		A10814A49FF8992EAEB5D09E /* InputInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputInjector.swift; sourceTree = "<group>"; };
+		B9C85525AE56768AD3772A8C /* AgentConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentConfig.swift; sourceTree = "<group>"; };
+		C034EB3B8BBCE35BB9AF4A21 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		C6CBEE1CF53506DDA0A3264D /* WaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
+		D4C10502697821F906F33298 /* MessageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageParser.swift; sourceTree = "<group>"; };
+		DE561550889D7F20D447A6DB /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
+		E8B0E2E72C0C760D27765DC0 /* FileTransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTransferManager.swift; sourceTree = "<group>"; };
+		F5AB5D455C0C08959BBFD7CA /* ServiDeskAgent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServiDeskAgent.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7E84FA461D9C9C6051E7682 /* SupportFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportFormView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1479B4442FFB749FCADBFDD0 /* Capture */ = {
+			isa = PBXGroup;
+			children = (
+				86F0ACD8EB37FA94EFC487FF /* FrameEncoder.swift */,
+				9CDF93C5E909ABE2B11035DB /* ScreenCaptureManager.swift */,
+			);
+			path = Capture;
+			sourceTree = "<group>";
+		};
+		23F59017AF810233FFDD34A1 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				B9C85525AE56768AD3772A8C /* AgentConfig.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		2DC73A1980E3AC2A7A3D1EF7 /* ServiDeskAgent */ = {
+			isa = PBXGroup;
+			children = (
+				68926CCAD94088892B731095 /* Assets.xcassets */,
+				5AED0170E209853CD5C0B26F /* Info.plist */,
+				182DBA1E284003A9E4895D21 /* ServiDeskAgent.entitlements */,
+				CFD7E0415F38F2A6D487F006 /* App */,
+				1479B4442FFB749FCADBFDD0 /* Capture */,
+				D58308EC06C790B4C20F38F9 /* Clipboard */,
+				23F59017AF810233FFDD34A1 /* Config */,
+				A86C52BE2880234E2BEA8E6F /* Crypto */,
+				616714A30DF465E96E1F4728 /* FileTransfer */,
+				A022FD96C9318D6288D3FE96 /* Input */,
+				799B5917D715DA603AFB0CC0 /* Models */,
+				4E73A0254DAFAC511103B3ED /* Network */,
+				CEC0D2B8501FC1C31A54A45F /* Views */,
+			);
+			path = ServiDeskAgent;
+			sourceTree = "<group>";
+		};
+		4E73A0254DAFAC511103B3ED /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				D4C10502697821F906F33298 /* MessageParser.swift */,
+				59C0F8C6BB9CEF793A69293A /* RelayConnection.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		616714A30DF465E96E1F4728 /* FileTransfer */ = {
+			isa = PBXGroup;
+			children = (
+				E8B0E2E72C0C760D27765DC0 /* FileTransferManager.swift */,
+			);
+			path = FileTransfer;
+			sourceTree = "<group>";
+		};
+		799B5917D715DA603AFB0CC0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8A439CB251E15E7C07E2E134 /* AgentMessages.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A022FD96C9318D6288D3FE96 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				A10814A49FF8992EAEB5D09E /* InputInjector.swift */,
+				19E1706E32E2492716003FD0 /* KeyCodeMapper.swift */,
+			);
+			path = Input;
+			sourceTree = "<group>";
+		};
+		A86C52BE2880234E2BEA8E6F /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				74BA930027BD3D9B78DBE589 /* E2ECrypto.swift */,
+			);
+			path = Crypto;
+			sourceTree = "<group>";
+		};
+		BE4A2B83967066828688B642 = {
+			isa = PBXGroup;
+			children = (
+				2DC73A1980E3AC2A7A3D1EF7 /* ServiDeskAgent */,
+				DA596B0E2722BA03B9283D7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CEC0D2B8501FC1C31A54A45F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0BB49873AF0701CB41DE808D /* ConnectedView.swift */,
+				8C2EE213F0D9EC6BF59D1F56 /* DisconnectedView.swift */,
+				C034EB3B8BBCE35BB9AF4A21 /* MainView.swift */,
+				7CFA7B445A569FBD03234C56 /* StatusBarView.swift */,
+				F7E84FA461D9C9C6051E7682 /* SupportFormView.swift */,
+				1D5C811A11BFF8D12FFC32CE /* UnattendedSettingsView.swift */,
+				C6CBEE1CF53506DDA0A3264D /* WaitingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CFD7E0415F38F2A6D487F006 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				96BD9D831806A498639AF15C /* AppState.swift */,
+				756533BBEA327479DB7237D8 /* ServiDeskAgentApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D58308EC06C790B4C20F38F9 /* Clipboard */ = {
+			isa = PBXGroup;
+			children = (
+				DE561550889D7F20D447A6DB /* ClipboardManager.swift */,
+			);
+			path = Clipboard;
+			sourceTree = "<group>";
+		};
+		DA596B0E2722BA03B9283D7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F5AB5D455C0C08959BBFD7CA /* ServiDeskAgent.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		869E8917ACBD737822E6F1BE /* ServiDeskAgent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CC21328CCA7B04631869872 /* Build configuration list for PBXNativeTarget "ServiDeskAgent" */;
+			buildPhases = (
+				845A40233452CCF0C733D6C8 /* Sources */,
+				46A7212FE311FF8C546E276C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ServiDeskAgent;
+			packageProductDependencies = (
+			);
+			productName = ServiDeskAgent;
+			productReference = F5AB5D455C0C08959BBFD7CA /* ServiDeskAgent.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0731EAF4AA2661CFF61048BB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					869E8917ACBD737822E6F1BE = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = D203B2959A638D6B5BBD1AB6 /* Build configuration list for PBXProject "ServiDeskAgent" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = BE4A2B83967066828688B642;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				869E8917ACBD737822E6F1BE /* ServiDeskAgent */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		46A7212FE311FF8C546E276C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				40AF389A49A8F03492F3A672 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		845A40233452CCF0C733D6C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5F5E0C02710C92C62CD4E04 /* AgentConfig.swift in Sources */,
+				0451745D36B67F3213891A92 /* AgentMessages.swift in Sources */,
+				C7E386401111C9708C287557 /* AppState.swift in Sources */,
+				E93975F4F4DE2F8EC2878875 /* ClipboardManager.swift in Sources */,
+				6D6D8AC4839C4A1F4775CEA8 /* ConnectedView.swift in Sources */,
+				D12752EE963C19CF57DDFC1C /* DisconnectedView.swift in Sources */,
+				C1C6597EBF8AA1BB60C264C3 /* E2ECrypto.swift in Sources */,
+				A213F2AEFC2795B801408F8B /* FileTransferManager.swift in Sources */,
+				6A2EDF32A0047446BA0C0E6C /* FrameEncoder.swift in Sources */,
+				9B4C88CD195991B382A60EB0 /* InputInjector.swift in Sources */,
+				4FA05A782D64015C456678D4 /* KeyCodeMapper.swift in Sources */,
+				9D2C86E658AC0D845BABEABB /* MainView.swift in Sources */,
+				6D65F24FDDE059715C3EF263 /* MessageParser.swift in Sources */,
+				ED2CE2A14AF2042B46720FFD /* RelayConnection.swift in Sources */,
+				5CB0E8494D8C01BF0DF51FA3 /* ScreenCaptureManager.swift in Sources */,
+				1407F412E1EF3BC182217F51 /* ServiDeskAgentApp.swift in Sources */,
+				FBCCED46EE440A5A0D88FCCD /* StatusBarView.swift in Sources */,
+				A15451D6DA305142C28900A8 /* SupportFormView.swift in Sources */,
+				1BF73610581A362A068274CC /* UnattendedSettingsView.swift in Sources */,
+				76F0C6E1A96475677503EF49 /* WaitingView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		089A7C9B9138780BBCA7E9B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ServiDeskAgent/ServiDeskAgent.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ServiDeskAgent/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "ServiDesk Agent";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		89F9EDFB749A043AB5801280 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = cz.helptech.ServiDeskAgent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		DAE8818261CF96A03F88261D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = cz.helptech.ServiDeskAgent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		E4506BC06B25F650EAC52D2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ServiDeskAgent/ServiDeskAgent.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ServiDeskAgent/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "ServiDesk Agent";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0CC21328CCA7B04631869872 /* Build configuration list for PBXNativeTarget "ServiDeskAgent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E4506BC06B25F650EAC52D2C /* Debug */,
+				089A7C9B9138780BBCA7E9B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D203B2959A638D6B5BBD1AB6 /* Build configuration list for PBXProject "ServiDeskAgent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAE8818261CF96A03F88261D /* Debug */,
+				89F9EDFB749A043AB5801280 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0731EAF4AA2661CFF61048BB /* Project object */;
+}
