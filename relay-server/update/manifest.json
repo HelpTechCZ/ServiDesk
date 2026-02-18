@@ -1,7 +1,8 @@
 {
-  "version": "1.4.2",
-  "download_url": "https://your-relay-domain.example.com/update/ServiDesk-Setup-1.4.2.exe",
-  "sha256": "",
+  "version": "1.5.2",
+  "download_url": "https://remote.servigo.cz/update/ServiDesk-Setup-1.5.2.exe",
+  "sha256": "966cb3b7859b828a01cbfe3a0cd62419a340e54d28886be7e77dd7a2a38ce110",
   "release_notes": "HW info při registraci, tlačítko pro kontrolu aktualizací",
-  "required": true
+  "required": false,
+  "signature": "m+oOEJTz6qTomnokOlUw99dwqRZznJfProRDTemxsF1LUpossOTUKAO8LOypQQsp6GXJX8EvyeBJYpkXi+PEx9wgLXHEa41DSnR6JexS4QXmJonfZa1bi4mTlVNe0C8okRwTskffDTJ3k9PpbnoXcwoJefHtl7Iy6MG3nO1C43qy60bpTogsWSSpgI0GEFoaWMdBfkZb+/tZlQ7JkSTueeTCx0E99ipst6r5ldefELq+zMnRjzbOH8L1YvD8mw+6wXvJQSWNR016v9zdwQ/6S/s/5xmZTdxuoSo5FaAPcj87393UWwxWMIshoSiqCd7nYv7bbcEOrKxRX8ccaK6zGA=="
 }
