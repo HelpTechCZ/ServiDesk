@@ -425,6 +425,13 @@ class RelayConnection: ObservableObject {
             guard let data = payloadData,
                   let payload = try? JSONDecoder().decode(AgentRegisteredPayload.self, from: data) else { return }
 
+            // Uložit agent_secret ze serveru pokud přišel
+            if let secret = payloadDict?["agent_secret"] as? String, !secret.isEmpty, secret != config.agentSecret {
+                config.agentSecret = secret
+                config.save()
+                print(">>> Agent secret updated from server")
+            }
+
             sessionId = payload.session_id
             connectionState = .registered
             reconnectAttempts = 0

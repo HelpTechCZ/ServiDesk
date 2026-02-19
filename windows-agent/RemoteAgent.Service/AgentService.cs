@@ -62,6 +62,7 @@ public class AgentService : BackgroundService
 
         // MessageHandler eventy
         _messageHandler.OnRegistered += OnAgentRegistered;
+        _messageHandler.OnAgentSecretReceived += OnAgentSecretReceived;
         _messageHandler.OnSessionAccepted += OnSessionAccepted;
         _messageHandler.OnSessionEnded += OnSessionEnded;
         _messageHandler.OnRequestRejected += OnRequestRejected;
@@ -422,6 +423,16 @@ public class AgentService : BackgroundService
     }
 
     // ── Relay eventy ──
+
+    private void OnAgentSecretReceived(string secret)
+    {
+        if (_config.AgentSecret != secret)
+        {
+            _config.AgentSecret = secret;
+            _config.Save();
+            _logger.LogInformation("Agent secret updated from server");
+        }
+    }
 
     private async void OnAgentRegistered(string sessionId)
     {

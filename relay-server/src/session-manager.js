@@ -116,10 +116,9 @@ class SessionManager {
       hwInfo: hw_info || null,
     });
 
-    return {
-      type: 'agent_registered',
-      payload: { session_id: sessionId, status: 'waiting' },
-    };
+    const payload = { session_id: sessionId, status: 'waiting' };
+    if (config.agentSecret) payload.agent_secret = config.agentSecret;
+    return { type: 'agent_registered', payload };
   }
 
   requestSupport(agentId, data) {

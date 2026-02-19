@@ -10,6 +10,7 @@ namespace RemoteAgent.Service.Network;
 public class MessageHandler
 {
     public event Action<string>? OnRegistered;           // session_id
+    public event Action<string>? OnAgentSecretReceived;  // agent_secret from server
     public event Action<string, string>? OnSessionAccepted;  // admin_name, message
     public event Action<string, string>? OnSessionEnded;     // reason, ended_by
     public event Action<string>? OnRequestRejected;           // reason
@@ -30,6 +31,11 @@ public class MessageHandler
         {
             case "agent_registered":
                 var sessionId = payload.GetProperty("session_id").GetString() ?? "";
+                if (payload.TryGetProperty("agent_secret", out var secretProp))
+                {
+                    var secret = secretProp.GetString();
+                    if (!string.IsNullOrEmpty(secret)) OnAgentSecretReceived?.Invoke(secret);
+                }
                 OnRegistered?.Invoke(sessionId);
                 break;
 
