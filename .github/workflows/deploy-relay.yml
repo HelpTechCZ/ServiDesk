@@ -25,5 +25,5 @@ jobs:
           context: ./relay-server
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/servidesk-relay:latest
-            ghcr.io/${{ github.repository_owner }}/servidesk-relay:${{ github.sha }}
+            ghcr.io/helptechcz/servidesk-relay:latest
+            ghcr.io/helptechcz/servidesk-relay:${{ github.sha }}
