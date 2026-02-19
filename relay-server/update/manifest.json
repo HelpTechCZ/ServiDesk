@@ -1,8 +1,8 @@
 {
   "version": "1.5.3",
   "download_url": "https://remote.servigo.cz/update/ServiDesk-Setup-1.5.3.exe",
-  "sha256": "",
+  "sha256": "c8a82da23b5a879c732315b585c40f5d96cef096a1dacc864db114a7e22f831d",
   "release_notes": "Bezpečnostní update: AGENT_SECRET autentizace, odmítnutí žádosti",
   "required": true,
-  "signature": ""
+  "signature": "PKrqWVmhBOM1wvTvFov20ZXL2xOCkrIqpl6hdyUESPfwwMjep/szYW0cVtBYzRq/KlhJ8/t4uPx9oVjDtviEDK1/nvyUyBo2dYBROYDyAb9fPCk6/IzyzMacC120oECybb+M1zwFmlgFTwwBjOrcfonFYVKuQsqYcSgZVPXrbsME/PH7hM420IW4P5Vo85wzNkTfAVlid084cjkCKZf3flwag98Vu7QZNU+B7bGBn9cYmWcBmANj0d+oMuKTykNKJfl7XoMYREhm2Yg1JWRz9JRXc0WwUxLgqbQhfYxHF14KItx1h+rd7sIzOYRvpQNiB/ZV8/b76VyovftC+TahtQ=="
 }
