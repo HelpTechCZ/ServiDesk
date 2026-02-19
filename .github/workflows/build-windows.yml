@@ -163,9 +163,8 @@ jobs:
           EOF
           rm -f /tmp/private.pem /tmp/sig.bin
 
-      - name: Upload signed assets to release
-        uses: softprops/action-gh-release@v2
+      - name: Upload manifest (private artifact, not in Release)
+        uses: actions/upload-artifact@v4
         with:
-          files: |
-            artifacts/manifest.json
-            artifacts/ServiDesk-Setup-*.exe
+          name: update-manifest-${{ needs.build.outputs.version }}
+          path: artifacts/manifest.json
