@@ -11,6 +11,8 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
 
     steps:
       - name: Checkout
@@ -127,3 +129,43 @@ jobs:
             windows-agent/publish/ServiDesk-Setup-*.exe
             windows-agent/publish/ServiDesk-*.msi
           generate_release_notes: true
+
+  sign:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ServiDesk-${{ needs.build.outputs.version }}
+          path: ./artifacts
+
+      - name: Sign installer & generate manifest
+        run: |
+          echo "${{ secrets.UPDATE_PRIVATE_KEY }}" | base64 -d > /tmp/private.pem
+          EXE=$(ls artifacts/ServiDesk-Setup-*.exe)
+          VERSION="${{ needs.build.outputs.version }}"
+
+          SHA=$(sha256sum "$EXE" | cut -d' ' -f1)
+          openssl dgst -sha256 -sign /tmp/private.pem -out /tmp/sig.bin "$EXE"
+          SIG=$(base64 -w0 /tmp/sig.bin)
+
+          cat > artifacts/manifest.json <<EOF
+          {
+            "version": "${VERSION}",
+            "download_url": "https://remote.servigo.cz/update/ServiDesk-Setup-${VERSION}.exe",
+            "sha256": "${SHA}",
+            "release_notes": "ServiDesk ${VERSION}",
+            "required": false,
+            "signature": "${SIG}"
+          }
+          EOF
+          rm -f /tmp/private.pem /tmp/sig.bin
+
+      - name: Upload signed assets to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/manifest.json
+            artifacts/ServiDesk-Setup-*.exe

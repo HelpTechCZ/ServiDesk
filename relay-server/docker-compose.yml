@@ -1,9 +1,9 @@
-version: '3.8'
 services:
   relay-server:
     build: .
     container_name: servidesk-relay
     restart: always
+    user: "1000:1000"
     ports:
       - "8090:8090"
     env_file:
