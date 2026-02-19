@@ -53,11 +53,11 @@ class SessionManager {
     const safeAgentVersion = sanitizeString(agent_version || '0.0.0', 32);
 
     // Ověřit agent_secret pokud je nakonfigurován na serveru
-    if (config.agentSecret) {
-      if (data.agent_secret !== config.agentSecret) {
-        logger.warn('Agent registration rejected – invalid agent_secret', { agentId: agent_id });
-        return { error: 'AUTH_FAILED', message: 'Invalid or missing agent_secret' };
-      }
+    // Prázdný/chybějící secret = agent ho ještě nemá → povolit, pošleme mu ho v odpovědi
+    // Neprázdný špatný secret = útočník → odmítnout
+    if (config.agentSecret && data.agent_secret && data.agent_secret !== config.agentSecret) {
+      logger.warn('Agent registration rejected – invalid agent_secret', { agentId: agent_id });
+      return { error: 'AUTH_FAILED', message: 'Invalid agent_secret' };
     }
 
     // Ověřit agent_token pokud je provisioning zapnutý
