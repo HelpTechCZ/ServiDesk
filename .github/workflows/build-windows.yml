@@ -141,13 +141,11 @@ jobs:
           name: ServiDesk-${{ needs.build.outputs.version }}
           path: ./artifacts
 
-      - name: Write signing key
-        env:
-          KEY_B64: ${{ secrets.UPDATE_PRIVATE_KEY }}
-        run: printf '%s' "$KEY_B64" | base64 -d > /tmp/private.pem
-
       - name: Sign installer & generate manifest
+        env:
+          SIGNING_KEY: ${{ secrets.UPDATE_PRIVATE_KEY }}
         run: |
+          printf '%s\n' "$SIGNING_KEY" > /tmp/private.pem
           EXE=$(ls artifacts/ServiDesk-Setup-*.exe)
           VERSION="${{ needs.build.outputs.version }}"
 
