@@ -46,6 +46,9 @@ public class AgentRegisterPayload
 
     [JsonPropertyName("agent_token")]
     public string AgentToken { get; set; } = string.Empty;
+
+    [JsonPropertyName("agent_secret")]
+    public string AgentSecret { get; set; } = string.Empty;
 }
 
 public class HardwareInfoPayload

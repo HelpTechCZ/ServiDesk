@@ -52,6 +52,14 @@ class SessionManager {
     const safeOsVersion = sanitizeString(os_version || 'Unknown');
     const safeAgentVersion = sanitizeString(agent_version || '0.0.0', 32);
 
+    // Ověřit agent_secret pokud je nakonfigurován na serveru
+    if (config.agentSecret) {
+      if (data.agent_secret !== config.agentSecret) {
+        logger.warn('Agent registration rejected – invalid agent_secret', { agentId: agent_id });
+        return { error: 'AUTH_FAILED', message: 'Invalid or missing agent_secret' };
+      }
+    }
+
     // Ověřit agent_token pokud je provisioning zapnutý
     if (this.provisionManager.isProvisioningEnabled()) {
       if (!agent_token || !this.provisionManager.validateAgentToken(agent_id, agent_token)) {

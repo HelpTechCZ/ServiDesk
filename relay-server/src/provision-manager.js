@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const config = require('./config');
 const logger = require('./logger');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -140,7 +141,9 @@ class ProvisionManager {
     // If agent already has a token, return it (idempotent)
     const existing = this.agentTokens.get(agentId);
     if (existing && existing.active) {
-      return { agent_token: existing.token };
+      const result = { agent_token: existing.token };
+      if (config.agentSecret) result.agent_secret = config.agentSecret;
+      return result;
     }
 
     // Generate new agent token
@@ -160,7 +163,9 @@ class ProvisionManager {
     this._saveProvisionTokens();
 
     logger.info('Agent provisioned', { agentId, hostname, provisionLabel: provRecord.label });
-    return { agent_token: agentToken };
+    const result = { agent_token: agentToken };
+    if (config.agentSecret) result.agent_secret = config.agentSecret;
+    return result;
   }
 
   // ── Agent token validation (called on every WS connect) ──

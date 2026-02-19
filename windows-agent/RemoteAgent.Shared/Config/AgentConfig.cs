@@ -38,6 +38,9 @@ public class AgentConfig
     [JsonPropertyName("agentToken")]
     public string AgentToken { get; set; } = "";
 
+    [JsonPropertyName("agentSecret")]
+    public string AgentSecret { get; set; } = "";
+
     [JsonPropertyName("unattendedAccessEnabled")]
     public bool UnattendedAccessEnabled { get; set; } = false;
 

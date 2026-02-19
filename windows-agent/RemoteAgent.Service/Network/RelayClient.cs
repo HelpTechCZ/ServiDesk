@@ -85,7 +85,8 @@ public class RelayClient : IDisposable
                 UnattendedEnabled = _config.UnattendedAccessEnabled,
                 UnattendedPasswordHash = _config.UnattendedAccessPasswordHash,
                 HwInfo = HardwareInfoCollector.Collect(),
-                AgentToken = _config.AgentToken
+                AgentToken = _config.AgentToken,
+                AgentSecret = _config.AgentSecret
             }
         });
 
@@ -126,6 +127,10 @@ public class RelayClient : IDisposable
             if (doc.RootElement.TryGetProperty("agent_token", out var tokenProp))
             {
                 _config.AgentToken = tokenProp.GetString() ?? "";
+                if (doc.RootElement.TryGetProperty("agent_secret", out var secretProp))
+                {
+                    _config.AgentSecret = secretProp.GetString() ?? "";
+                }
                 _config.Save();
             }
         }

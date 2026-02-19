@@ -138,6 +138,9 @@ class RelayConnection: ObservableObject {
                let agentToken = json["agent_token"] as? String {
                 DispatchQueue.main.async {
                     self.config.agentToken = agentToken
+                    if let agentSecret = json["agent_secret"] as? String, !agentSecret.isEmpty {
+                        self.config.agentSecret = agentSecret
+                    }
                     self.config.save()
                     print(">>> Agent provisioned successfully")
 
@@ -181,6 +184,9 @@ class RelayConnection: ObservableObject {
         ]
         if !config.agentToken.isEmpty {
             registerPayload["agent_token"] = config.agentToken
+        }
+        if !config.agentSecret.isEmpty {
+            registerPayload["agent_secret"] = config.agentSecret
         }
 
         sendJSON([

@@ -9,13 +9,14 @@ class AgentConfig: ObservableObject, Codable {
     @Published var captureDefaultQuality: String = "medium"
     @Published var provisionToken: String = ""
     @Published var agentToken: String = ""
+    @Published var agentSecret: String = ""
     @Published var unattendedAccessEnabled: Bool = false
     @Published var unattendedAccessPasswordHash: String = ""
 
     enum CodingKeys: String, CodingKey {
         case relayServerURL, agentId, agentVersion
         case captureMaxFps, captureDefaultQuality
-        case provisionToken, agentToken, unattendedAccessEnabled, unattendedAccessPasswordHash
+        case provisionToken, agentToken, agentSecret, unattendedAccessEnabled, unattendedAccessPasswordHash
     }
 
     init() {
@@ -32,6 +33,7 @@ class AgentConfig: ObservableObject, Codable {
         captureDefaultQuality = try container.decodeIfPresent(String.self, forKey: .captureDefaultQuality) ?? "medium"
         provisionToken = try container.decodeIfPresent(String.self, forKey: .provisionToken) ?? ""
         agentToken = try container.decodeIfPresent(String.self, forKey: .agentToken) ?? ""
+        agentSecret = try container.decodeIfPresent(String.self, forKey: .agentSecret) ?? ""
         unattendedAccessEnabled = try container.decodeIfPresent(Bool.self, forKey: .unattendedAccessEnabled) ?? false
         unattendedAccessPasswordHash = try container.decodeIfPresent(String.self, forKey: .unattendedAccessPasswordHash) ?? ""
     }
@@ -45,6 +47,7 @@ class AgentConfig: ObservableObject, Codable {
         try container.encode(captureDefaultQuality, forKey: .captureDefaultQuality)
         try container.encode(provisionToken, forKey: .provisionToken)
         try container.encode(agentToken, forKey: .agentToken)
+        try container.encode(agentSecret, forKey: .agentSecret)
         try container.encode(unattendedAccessEnabled, forKey: .unattendedAccessEnabled)
         try container.encode(unattendedAccessPasswordHash, forKey: .unattendedAccessPasswordHash)
     }

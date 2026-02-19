@@ -5,6 +5,7 @@ module.exports = {
   host: process.env.HOST || '0.0.0.0',
 
   adminToken: process.env.ADMIN_TOKEN || '',
+  agentSecret: process.env.AGENT_SECRET || '',
   trustProxy: process.env.TRUST_PROXY === 'true',
   maxConnectionsPerIp: parseInt(process.env.MAX_CONNECTIONS_PER_IP, 10) || 20,
   maxDevices: parseInt(process.env.MAX_DEVICES, 10) || 500,
